@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://test_crop_manager"]
+
+[ext_resource type="Script" path="res://scenes/test/test_crop_manager.gd" id="1_script"]
+
+[node name="TestCropManager" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Label" type="Label" parent="."]
+offset_right = 400.0
+offset_bottom = 300.0
+text = "CropManager 自动化测试运行中..."

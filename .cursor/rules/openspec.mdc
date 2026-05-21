@@ -1,0 +1,155 @@
+---
+description: OpenSpec spec-driven development workflow for Pixel Farm project
+globs:
+alwaysApply: true
+---
+
+# OpenSpec Spec-Driven Development
+
+You are working on a pixel-art farming game (像素田园) using Godot 4.6 + GDScript, following the OpenSpec spec-driven workflow.
+
+## Project Context
+
+- **Engine**: Godot 4.6 (GL Compatibility renderer)
+- **Language**: GDScript (Autoload singleton pattern)
+- **Resolution**: 480x320 viewport, 1920x1280 window (4x scaling)
+- **Data**: JSON files in `res://data/`
+- **Architecture**: EventBus signal decoupling + Autoload managers
+- **Project path**: `/Users/linzizhan/Desktop/coco_project/像素风田园游戏/pixel-farm`
+
+## OpenSpec Commands
+
+When the user types any `/opsx:` command, follow the corresponding workflow:
+
+### /opsx:explore [topic]
+Enter explore mode - think deeply about the topic without implementing.
+- Read relevant files, ask questions, visualize with diagrams
+- NEVER write code in explore mode
+- Offer to create a change when insights crystallize
+
+### /opsx:new [change-name]
+Start a new change:
+1. Create `openspec/changes/<name>/` with `.openspec.yaml`, scaffold artifacts
+2. Show artifact status (proposal → design → specs → tasks)
+3. Get instructions for the first artifact (proposal)
+4. STOP and wait for user direction
+
+### /opsx:continue
+Continue the current change by creating the next artifact:
+1. Check which artifacts are done vs pending
+2. Read existing artifacts for context
+3. Draft the next artifact following the template
+4. Mark artifact done and show updated status
+
+### /opsx:ff
+Fast-forward: create all remaining artifacts in one pass without pausing between each.
+
+### /opsx:apply
+Implement tasks from the current change:
+1. Read all context files (proposal, design, specs, tasks)
+2. Work through tasks sequentially
+3. Mark each task `[x]` as completed
+4. Pause on blockers or ambiguity
+
+### /opsx:verify
+Verify implementation against artifacts:
+1. Check **Completeness**: all tasks done, all spec requirements covered
+2. Check **Correctness**: implementation matches spec scenarios
+3. Check **Coherence**: follows design decisions and project patterns
+4. Output report with CRITICAL / WARNING / SUGGESTION issues
+
+### /opsx:archive
+Archive a completed change:
+1. Sync delta specs to `openspec/specs/`
+2. Move change to `openspec/changes/archive/YYYY-MM-DD-<name>/`
+3. Show summary
+
+## Artifact Schema (spec-driven)
+
+Changes follow this artifact sequence:
+
+```
+proposal.md → design.md → specs/<capability>/spec.md → tasks.md
+```
+
+### proposal.md
+- Why (motivation), What Changes, Capabilities (new/modified), Impact
+
+### design.md
+- Context, Goals/Non-Goals, Decisions (with rationale + alternatives rejected), Risks
+
+### specs/<capability>/spec.md
+- ADDED/MODIFIED/REMOVED Requirements
+- Each requirement has Scenarios (WHEN/THEN format)
+
+### tasks.md
+- Numbered task groups with `- [ ]` checkboxes
+- Granular enough to implement one at a time
+
+## Project Conventions
+
+### GDScript Rules
+- All Autoload scripts: NO `class_name` (conflicts with singleton registration)
+- Use `push_error()` / `push_warning()` for error handling
+- Return `.duplicate(true)` from query methods to protect immutability
+- Signal names use past tense: `crop_planted`, `gold_changed`
+- Private members prefixed with `_`: `var _crops`, `func _update()`
+
+### Autoload Load Order
+```
+EventBus → DataManager → GameManager → CropManager → InventoryManager → SceneManager → AudioManager
+```
+
+### File Organization
+```
+pixel-farm/
+├── data/              # JSON data tables (crops, items, levels, achievements)
+├── scripts/autoload/  # Global singletons
+├── scripts/crop/      # Crop-related scripts
+├── scripts/character/  # Character scripts
+├── scripts/inventory/ # Inventory scripts
+├── scripts/ui/        # UI scripts
+├── scenes/main/       # Entry scene
+├── scenes/farm/       # Farm scene
+├── scenes/test/       # Test scenes
+└── assets/            # Art assets (sprites, audio, fonts)
+```
+
+### Testing Pattern
+- Test scenes in `scenes/test/test_<system>.tscn`
+- Run with F6 (current scene), not F5 (main scene)
+- Use `_assert(condition, message)` pattern
+- Print summary: `=== 测试完成: N 通过, M 失败 ===`
+
+## OpenSpec Directory Structure
+
+```
+openspec/
+├── specs/                    # Main specs (synced from changes)
+│   ├── project-config/
+│   ├── data-loading/
+│   ├── event-bus/
+│   ├── game-state/
+│   └── crop-state-machine/
+├── changes/                  # Active changes
+│   └── <change-name>/
+│       ├── .openspec.yaml
+│       ├── proposal.md
+│       ├── design.md
+│       ├── specs/<cap>/spec.md
+│       └── tasks.md
+└── changes/archive/          # Archived changes
+    ├── 2026-04-29-prd1-project-skeleton/
+    └── 2026-05-08-prd2-crop-state-machine/
+```
+
+## Completed PRDs
+- PRD1: Project skeleton + core data system ✅
+- PRD2: Crop state machine + watering/wither logic ✅
+- PRD3: Inventory system (data layer) — next up
+
+## Key Reference Files
+- `prd/prd大纲.md` — 28 PRD development roadmap
+- `像素田园_游戏设计文档.md` — Game design document (source of truth)
+- `前期准备.md` — Environment setup guide
+- `开放问题.md` — Open design decisions

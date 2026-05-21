@@ -1,0 +1,60 @@
+---
+description: Godot 4.6 GDScript coding conventions for Pixel Farm
+globs:
+  - "pixel-farm/**/*.gd"
+  - "pixel-farm/**/*.tscn"
+  - "pixel-farm/**/*.tres"
+alwaysApply: false
+---
+
+# Godot 4.6 GDScript Conventions
+
+## General
+- Use GDScript, never C#
+- Use static typing everywhere: `var x: int = 0`, `func foo() -> String:`
+- Use `##` for doc comments (Godot documentation comments)
+- Use `#` for inline comments
+- Tab indentation (Godot default)
+
+## Autoload Singletons
+- NEVER use `class_name` in Autoload scripts (causes "hides autoload singleton" error)
+- Register in project.godot `[autoload]` section with `*` prefix
+- Access globally: `EventBus.signal_name.emit()`, `DataManager.get_crop("carrot")`
+
+## Signals
+- Define on EventBus for cross-system communication
+- Use past tense naming: `crop_planted`, `gold_changed`, `level_up`
+- Always include typed parameters: `signal crop_planted(tile_pos: Vector2i, crop_id: String)`
+
+## Data Access
+- All JSON data via `DataManager.get_*()` methods
+- Always return `.duplicate(true)` from query methods to ensure immutability
+- Never modify data returned from DataManager directly
+
+## Error Handling
+- Use `push_error()` for fatal issues (missing files, corrupt data)
+- Use `push_warning()` for recoverable issues (missing entries, fallback used)
+- Never crash silently — always log
+
+## Naming
+- Files: `snake_case.gd`
+- Classes: `PascalCase` (only non-Autoload scripts)
+- Functions: `snake_case()`
+- Private: `_prefixed`
+- Constants: `UPPER_SNAKE_CASE`
+- Signals: `snake_case` past tense
+- Enums: `PascalCase` with `UPPER_SNAKE_CASE` values
+
+## Testing
+- Test scripts extend `Node2D`
+- Place in `scenes/test/test_<system>.gd`
+- Use `_assert(condition: bool, message: String)` helper
+- Run with F6 (current scene only)
+- Always print `=== SystemName 自动化测试 ===` header
+
+## Pixel Art Config
+- Viewport: 480x320 (30x20 tiles at 16px)
+- Window: 1920x1280 (4x scale)
+- Texture filter: Nearest (0)
+- Stretch mode: viewport
+- Stretch aspect: keep

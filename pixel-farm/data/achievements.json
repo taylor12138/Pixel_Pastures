@@ -1,0 +1,37 @@
+{
+  "first_harvest": {
+    "id": "first_harvest",
+    "name": "初次收获",
+    "description": "收获第一株作物",
+    "condition": {"type": "harvest_count", "value": 1},
+    "reward": {"xp": 10, "gold": 20}
+  },
+  "crop_variety": {
+    "id": "crop_variety",
+    "name": "品种收集家",
+    "description": "种植过5种不同作物",
+    "condition": {"type": "crop_types_planted", "value": 5},
+    "reward": {"xp": 50, "gold": 100}
+  },
+  "gold_farmer": {
+    "id": "gold_farmer",
+    "name": "小富翁",
+    "description": "累计赚取1000金币",
+    "condition": {"type": "total_gold_earned", "value": 1000},
+    "reward": {"xp": 30, "gold": 0}
+  },
+  "diligent_farmer": {
+    "id": "diligent_farmer",
+    "name": "勤劳农夫",
+    "description": "累计浇水50次",
+    "condition": {"type": "water_count", "value": 50},
+    "reward": {"xp": 25, "gold": 50}
+  },
+  "level_master": {
+    "id": "level_master",
+    "name": "满级大佬",
+    "description": "达到最高等级",
+    "condition": {"type": "player_level", "value": 7},
+    "reward": {"xp": 0, "gold": 500}
+  }
+}

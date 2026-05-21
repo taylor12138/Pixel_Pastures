@@ -1,0 +1,122 @@
+{
+  "carrot": {
+    "id": "carrot",
+    "name": "胡萝卜",
+    "name_en": "Carrot",
+    "seed_price": 10,
+    "sell_price": 25,
+    "growth_time_per_stage": 10,
+    "total_water_count": 3,
+    "seasons": ["spring", "autumn"],
+    "unlock_level": 1,
+    "description": "基础作物，生长快速"
+  },
+  "tomato": {
+    "id": "tomato",
+    "name": "番茄",
+    "name_en": "Tomato",
+    "seed_price": 15,
+    "sell_price": 40,
+    "growth_time_per_stage": 15,
+    "total_water_count": 3,
+    "seasons": ["summer"],
+    "unlock_level": 2,
+    "description": "夏季作物，收益不错"
+  },
+  "cabbage": {
+    "id": "cabbage",
+    "name": "白菜",
+    "name_en": "Cabbage",
+    "seed_price": 8,
+    "sell_price": 20,
+    "growth_time_per_stage": 8,
+    "total_water_count": 3,
+    "seasons": ["autumn", "winter"],
+    "unlock_level": 1,
+    "description": "便宜实惠的基础作物"
+  },
+  "corn": {
+    "id": "corn",
+    "name": "玉米",
+    "name_en": "Corn",
+    "seed_price": 20,
+    "sell_price": 55,
+    "growth_time_per_stage": 20,
+    "total_water_count": 3,
+    "seasons": ["summer"],
+    "unlock_level": 1,
+    "description": "生长较慢但收益高"
+  },
+  "potato": {
+    "id": "potato",
+    "name": "土豆",
+    "name_en": "Potato",
+    "seed_price": 12,
+    "sell_price": 30,
+    "growth_time_per_stage": 13,
+    "total_water_count": 3,
+    "seasons": ["spring", "autumn"],
+    "unlock_level": 1,
+    "description": "朴实可靠的根茎作物"
+  },
+  "strawberry": {
+    "id": "strawberry",
+    "name": "草莓",
+    "name_en": "Strawberry",
+    "seed_price": 25,
+    "sell_price": 65,
+    "growth_time_per_stage": 17,
+    "total_water_count": 3,
+    "seasons": ["spring"],
+    "unlock_level": 3,
+    "description": "春季限定，高收益"
+  },
+  "pepper": {
+    "id": "pepper",
+    "name": "辣椒",
+    "name_en": "Pepper",
+    "seed_price": 18,
+    "sell_price": 45,
+    "growth_time_per_stage": 18,
+    "total_water_count": 3,
+    "seasons": ["summer"],
+    "unlock_level": 4,
+    "description": "火辣的夏季作物"
+  },
+  "pumpkin": {
+    "id": "pumpkin",
+    "name": "南瓜",
+    "name_en": "Pumpkin",
+    "seed_price": 35,
+    "sell_price": 90,
+    "growth_time_per_stage": 30,
+    "total_water_count": 3,
+    "seasons": ["autumn"],
+    "unlock_level": 5,
+    "description": "秋季之王，最高收益"
+  },
+  "eggplant": {
+    "id": "eggplant",
+    "name": "茄子",
+    "name_en": "Eggplant",
+    "seed_price": 22,
+    "sell_price": 50,
+    "growth_time_per_stage": 22,
+    "total_water_count": 3,
+    "seasons": ["summer"],
+    "unlock_level": 4,
+    "description": "紫色的夏日蔬菜"
+  },
+  "broccoli": {
+    "id": "broccoli",
+    "name": "西兰花",
+    "name_en": "Broccoli",
+    "seed_price": 28,
+    "sell_price": 60,
+    "growth_time_per_stage": 23,
+    "total_water_count": 3,
+    "seasons": ["spring", "autumn"],
+    "unlock_level": 6,
+    "description": "高级蔬菜，营养丰富"
+  }
+}

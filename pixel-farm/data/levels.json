@@ -1,0 +1,9 @@
+[
+  {"level": 1, "name": "新手农夫", "xp_required": 0, "unlocks": {"crops": ["carrot", "cabbage", "corn", "potato"], "features": ["basic_farm"], "farm_slots": 12}},
+  {"level": 2, "name": "小园丁", "xp_required": 100, "unlocks": {"crops": ["tomato"], "features": ["watering_can_upgrade"], "farm_slots": 16}},
+  {"level": 3, "name": "种植能手", "xp_required": 250, "unlocks": {"crops": ["strawberry"], "features": ["decoration_mode"], "farm_slots": 24}},
+  {"level": 4, "name": "田园达人", "xp_required": 500, "unlocks": {"crops": ["pepper", "eggplant"], "features": ["steal_crops", "expand_land"], "farm_slots": 36}},
+  {"level": 5, "name": "农场主", "xp_required": 800, "unlocks": {"crops": ["pumpkin"], "features": ["animal_companion"], "farm_slots": 48}},
+  {"level": 6, "name": "园艺大师", "xp_required": 1200, "unlocks": {"crops": ["broccoli"], "features": ["public_plaza"], "farm_slots": 64}},
+  {"level": 7, "name": "传说农夫", "xp_required": 1800, "unlocks": {"crops": [], "features": ["golden_decoration", "special_title"], "farm_slots": 80}}
+]
