@@ -15,6 +15,8 @@ signal crop_cleared(tile_pos: Vector2i)
 signal gold_changed(new_amount: int, delta: int)
 signal item_purchased(item_id: String, price: int)
 signal item_sold(item_id: String, price: int)
+signal transaction_completed(result: Dictionary)
+signal transaction_failed(result: Dictionary)
 
 # ─── 玩家进度 ───
 signal xp_gained(amount: int, source: String)

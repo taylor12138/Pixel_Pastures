@@ -147,8 +147,11 @@ func save_game() -> void:
 	var inventory_save_data: Dictionary = {}
 	if has_node("/root/InventoryManager"):
 		inventory_save_data = InventoryManager.export_save_data()
+	var economy_save_data: Dictionary = {}
+	if has_node("/root/EconomyManager"):
+		economy_save_data = EconomyManager.export_save_data()
 	var save_data := {
-		"version": 2,
+		"version": 3,
 		"player_name": player_name,
 		"gold": gold,
 		"xp": xp,
@@ -157,6 +160,7 @@ func save_game() -> void:
 		"current_season": current_season,
 		"inventory": inventory,
 		"inventory_slots": inventory_save_data,
+		"economy": economy_save_data,
 		"farm_data": farm_data,
 		"achievements_unlocked": achievements_unlocked,
 		"stats": stats,
@@ -206,6 +210,9 @@ func load_game() -> bool:
 			InventoryManager.import_save_data({"inventory": inventory})
 		else:
 			InventoryManager.import_save_data(inventory_save_data)
+	if has_node("/root/EconomyManager") and data.has("economy"):
+		var economy_save_data: Dictionary = data.get("economy", {})
+		EconomyManager.import_save_data(economy_save_data)
 	farm_data = data.get("farm_data", {})
 	achievements_unlocked = []
 	for ach_id in data.get("achievements_unlocked", []):
@@ -280,6 +287,8 @@ func new_game(name: String = "农夫") -> void:
 	inventory = {}
 	if has_node("/root/InventoryManager"):
 		InventoryManager.debug_clear()
+	if has_node("/root/EconomyManager"):
+		EconomyManager.debug_reset_stats()
 	farm_data = {}
 	achievements_unlocked = []
 	stats = {

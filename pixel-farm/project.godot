@@ -23,6 +23,7 @@ DataManager="*res://scripts/autoload/data_manager.gd"
 GameManager="*res://scripts/autoload/game_manager.gd"
 CropManager="*res://scripts/autoload/crop_manager.gd"
 InventoryManager="*res://scripts/autoload/inventory_manager.gd"
+EconomyManager="*res://scripts/autoload/economy_manager.gd"
 SceneManager="*res://scripts/autoload/scene_manager.gd"
 AudioManager="*res://scripts/autoload/audio_manager.gd"
 
