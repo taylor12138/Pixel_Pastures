@@ -124,22 +124,36 @@ func get_item(item_id: String) -> Dictionary:
 	return {}
 
 
-## 获取等级数据（便捷方法）
+## 获取等级数据（便捷方法，返回副本保证不可变性）
 func get_level_data(level: int) -> Dictionary:
 	var levels = get_table("levels")
 	if levels is Array:
 		for lvl in levels:
 			if lvl is Dictionary and lvl.get("level", -1) == level:
-				return lvl
+				return lvl.duplicate(true)
 	return {}
+
+
+## 获取所有等级数据（返回副本保证不可变性）
+func get_all_levels() -> Array:
+	var result: Array = []
+	var levels = get_table("levels")
+	if levels is Array:
+		for lvl in levels:
+			if lvl is Dictionary:
+				result.append(lvl.duplicate(true))
+	return result
 
 
 ## 获取最大等级
 func get_max_level() -> int:
+	var max_level := 1
 	var levels = get_table("levels")
 	if levels is Array:
-		return levels.size()
-	return 1
+		for lvl in levels:
+			if lvl is Dictionary:
+				max_level = maxi(max_level, int(lvl.get("level", 1)))
+	return max_level
 
 
 ## 热重载数据表（调试用）

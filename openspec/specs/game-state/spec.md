@@ -1,4 +1,9 @@
-## ADDED Requirements
+# game-state Specification
+
+## Purpose
+This specification defines the game-state capability.
+
+## Requirements
 
 ### Requirement: Game state management
 GameManager SHALL maintain a `current_state` property using a `GameState` enum with values: `MAIN_MENU`, `PLAYING`, `PAUSED`.
@@ -31,11 +36,21 @@ GameManager SHALL maintain a `player_gold` property with an initial value of 100
 - **THEN** the current gold value SHALL be returned without error
 
 ### Requirement: Player level and XP
-GameManager SHALL maintain `player_level` (initial: 1) and `player_xp` (initial: 0) properties.
+GameManager SHALL maintain player XP and level runtime values with initial level `1` and XP `0`; `LevelManager` SHALL be the business authority for XP addition, level checks, and unlock queries.
 
 #### Scenario: Initial level and XP
 - **WHEN** a new game is started
-- **THEN** `GameManager.player_level` SHALL equal `1` and `GameManager.player_xp` SHALL equal `0`
+- **THEN** `GameManager.level` SHALL equal `1`
+- **AND** `GameManager.xp` SHALL equal `0`
+
+#### Scenario: GameManager delegates XP gain when LevelManager exists
+- **WHEN** `GameManager.add_xp(amount, source)` is called and `LevelManager` is available
+- **THEN** `GameManager` SHALL delegate the operation to `LevelManager.add_xp(amount, source)`
+- **AND** `GameManager` SHALL NOT run duplicate level-up logic for the same operation
+
+#### Scenario: GameManager legacy XP fallback remains available
+- **WHEN** `GameManager.add_xp(amount, source)` is called and `LevelManager` is not available
+- **THEN** `GameManager` SHALL preserve a fallback behavior that can add XP without crashing
 
 ### Requirement: Player energy system
 GameManager SHALL maintain `player_energy` (initial: 100) and `player_max_energy` (initial: 100) properties.
@@ -45,21 +60,32 @@ GameManager SHALL maintain `player_energy` (initial: 100) and `player_max_energy
 - **THEN** `GameManager.player_energy` SHALL equal `100` and `GameManager.player_max_energy` SHALL equal `100`
 
 ### Requirement: Reset to default
-GameManager SHALL provide a `reset_to_default()` method that resets all player properties to their initial values.
+GameManager SHALL provide a `reset_to_default()` method that resets all player properties to their initial values, including XP and level values consumed by LevelManager.
 
 #### Scenario: Reset restores all defaults
 - **WHEN** `GameManager.reset_to_default()` is called after player data has been modified
-- **THEN** `player_gold` SHALL be `100`, `player_level` SHALL be `1`, `player_xp` SHALL be `0`, `player_energy` SHALL be `100`
+- **THEN** `GameManager.gold` or `player_gold` SHALL be reset to its configured starting value
+- **AND** `GameManager.level` SHALL be `1`
+- **AND** `GameManager.xp` SHALL be `0`
+- **AND** player energy SHALL be reset to its configured starting value
 
 ### Requirement: SaveManager placeholder
-SaveManager SHALL exist as a registered Autoload with placeholder methods `save_game()`, `load_game()`, and `has_save()` that emit warnings and return false.
+SaveManager SHALL exist as a registered Autoload with concrete persistence methods that return structured Dictionary results and manage local JSON saves.
 
-#### Scenario: Save game placeholder
-- **WHEN** `SaveManager.save_game(0)` is called
-- **THEN** a warning "SaveManager: 尚未实现 (PRD6)" SHALL be printed and the method SHALL return `false`
+#### Scenario: Save game persists data
+- **WHEN** `SaveManager.save_game(0)` is called with valid runtime state
+- **THEN** the method SHALL write a JSON save file for slot 0
+- **AND** it SHALL return a Dictionary with `success=true`
 
-#### Scenario: Has save placeholder
-- **WHEN** `SaveManager.has_save(0)` is called
+#### Scenario: Load game restores data
+- **WHEN** `SaveManager.load_game(0)` is called for a valid save file
+- **THEN** the method SHALL restore saved runtime state
+- **AND** it SHALL return a Dictionary with `success=true`
+
+#### Scenario: Has save checks valid save existence
+- **WHEN** `SaveManager.has_save(0)` is called for an existing valid save
+- **THEN** the method SHALL return `true`
+- **WHEN** the slot is missing or invalid
 - **THEN** the method SHALL return `false`
 
 ### Requirement: AudioManager placeholder
@@ -74,15 +100,16 @@ AudioManager SHALL exist as a registered Autoload with placeholder methods `play
 - **THEN** a warning "AudioManager: 尚未实现 (PRD19)" SHALL be printed and no crash SHALL occur
 
 ### Requirement: Autoload registration in project.godot
-All 5 Autoloads (EventBus, DataManager, GameManager, SaveManager, AudioManager) SHALL be registered in the `[autoload]` section of project.godot in the correct load order.
+All core Autoloads SHALL be registered in the `[autoload]` section of project.godot in dependency-safe load order including SaveManager after the PRD1-5 gameplay managers.
 
 #### Scenario: All autoloads accessible
 - **WHEN** any game script runs
-- **THEN** `EventBus`, `DataManager`, `GameManager`, `SaveManager`, and `AudioManager` SHALL all be accessible as global singletons
+- **THEN** `EventBus`, `DataManager`, `GameManager`, `CropManager`, `InventoryManager`, `EconomyManager`, `LevelManager`, `SceneManager`, `SaveManager`, and `AudioManager` SHALL all be accessible as global singletons when their scripts exist in the project
 
 #### Scenario: Load order is correct
 - **WHEN** project.godot `[autoload]` section is inspected
-- **THEN** the order SHALL be: EventBus, DataManager, GameManager, SaveManager, AudioManager
+- **THEN** the order SHALL place `SaveManager` after `EventBus`, `DataManager`, `GameManager`, `CropManager`, `InventoryManager`, `EconomyManager`, `LevelManager`, and `SceneManager`
+- **AND** it SHALL place `SaveManager` before `AudioManager`
 
 ### Requirement: Initialization logging
 Each Autoload SHALL print a confirmation log message in `_ready()` to verify successful initialization.
@@ -94,8 +121,6 @@ Each Autoload SHALL print a confirmation log message in `_ready()` to verify suc
 ---
 
 <!-- Synced from prd3-inventory-system -->
-
-## MODIFIED Requirements
 
 ### Requirement: InventoryManager is the runtime authority for item state
 
@@ -144,9 +169,6 @@ Each Autoload SHALL print a confirmation log message in `_ready()` to verify suc
 - **WHEN** `CropManager.harvest_crop(tile_pos)` succeeds
 - **THEN** it adds one `harvest_<crop_id>` through `InventoryManager.add_item()`
 - **AND** inventory slots and `GameManager.inventory` remain synchronized
-# game-state Specification
-
-## MODIFIED Requirements
 
 ### Requirement: GameManager remains the gold authority while EconomyManager is the transaction authority
 
@@ -179,22 +201,37 @@ The Godot project SHALL register `EconomyManager` as an Autoload singleton after
 - **AND** systems can call `EconomyManager.buy_seed()` without manually instantiating it
 - **AND** `EconomyManager` does not use `class_name`
 
-### Requirement: Game save data preserves economy stats when available
+### Requirement: Game save data preserves level system data when available
+GameManager SHALL include LevelManager save data in its save payload when the `LevelManager` Autoload exists, and SHALL restore it during load when level-system data is present.
 
-`GameManager` SHALL include EconomyManager save data in its save payload when the `EconomyManager` Autoload exists, and SHALL restore it during load when economy data is present.
+#### Scenario: Save includes level system data
+- **WHEN** `GameManager.save_game()` is called and `LevelManager` is available
+- **THEN** the serialized save data SHALL contain a `level_system` field
+- **AND** that field SHALL equal `LevelManager.export_save_data()`
 
-#### Scenario: Save includes economy data
-- **WHEN** `GameManager.save_game()` is called and `EconomyManager` is available
-- **THEN** the serialized save data contains an `economy` field
-- **AND** that field equals `EconomyManager.export_save_data()`
+#### Scenario: Load restores level system data
+- **WHEN** `GameManager.load_game()` reads save data containing a `level_system` field
+- **AND** `LevelManager` is available
+- **THEN** it SHALL call `LevelManager.import_save_data(level_system_data)`
+- **AND** XP and level consistency SHALL be restored through `LevelManager.recalculate_level()`
 
-#### Scenario: Load restores economy data
-- **WHEN** `GameManager.load_game()` reads save data containing an `economy` field
-- **AND** `EconomyManager` is available
-- **THEN** it calls `EconomyManager.import_save_data(economy_data)`
-- **AND** economy transaction stats are restored
+#### Scenario: Legacy save without level system data remains compatible
+- **WHEN** `GameManager.load_game()` reads a save file without a `level_system` field
+- **THEN** loading SHALL still succeed
+- **AND** `GameManager.xp` and `GameManager.level` root fields SHALL remain compatible with existing save behavior
 
-#### Scenario: Legacy save without economy data remains compatible
-- **WHEN** `GameManager.load_game()` reads a save file without an `economy` field
-- **THEN** loading still succeeds
-- **AND** `EconomyManager` keeps or resets default zeroed stats without throwing errors
+---
+
+<!-- Synced from prd6-save-system -->
+
+### Requirement: GameManager save export and import
+GameManager SHALL expose serializable save export and import behavior for player core state used by SaveManager.
+
+#### Scenario: GameManager exports core state
+- **WHEN** `GameManager.export_save_data()` is called
+- **THEN** it SHALL return a Dictionary containing game state, gold, level, XP, energy, max energy, stats, and last-online timestamp
+
+#### Scenario: GameManager imports core state
+- **WHEN** `GameManager.import_save_data(data)` receives saved core state
+- **THEN** it SHALL restore gold, level, XP, energy, max energy, and stats
+- **AND** it SHALL set runtime state to playing after a successful load

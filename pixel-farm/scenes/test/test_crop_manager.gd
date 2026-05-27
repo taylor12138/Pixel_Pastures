@@ -66,8 +66,8 @@ func test_plant_success() -> void:
 func test_plant_no_seed() -> void:
 	var pos := Vector2i(1, 0)
 	_ensure_empty(pos)
-	# 确保没有 wheat 种子
-	var result := CropManager.plant_crop(pos, "wheat")
+	# 确保没有 pumpkin 种子
+	var result := CropManager.plant_crop(pos, "pumpkin")
 	_assert(result == false, "无种子时 plant_crop 返回 false")
 	_assert(not CropManager.has_crop(pos), "无种子时地块仍为空")
 
@@ -271,7 +271,7 @@ func test_export_import() -> void:
 	CropManager.plant_crop(pos, "carrot")
 	CropManager.water_crop(pos)
 	var exported := CropManager.export_save_data()
-	_assert(exported.has("26,0"), "export_save_data 包含正确 key")
+	_assert(exported.has("tiles") and exported["tiles"].has("26,0"), "export_save_data 包含 tiles 与正确 key")
 	CropManager.clear_crop(pos)
 	_assert(not CropManager.has_crop(pos), "清除后无作物")
 	CropManager.import_save_data(exported)

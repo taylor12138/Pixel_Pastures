@@ -1,4 +1,9 @@
-## ADDED Requirements
+# project-config Specification
+
+## Purpose
+This specification defines the project-config capability.
+
+## Requirements
 
 ### Requirement: Pixel-perfect rendering configuration
 The project SHALL configure Godot's rendering pipeline for pixel-perfect display with Nearest texture filtering, viewport stretch mode, and keep aspect ratio.

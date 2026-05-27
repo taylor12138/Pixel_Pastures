@@ -122,6 +122,9 @@ func sell_item(item_id: String, quantity: int = 1) -> Dictionary:
 
 	GameManager.add_gold(total_price, "sell")
 
+	if has_node("/root/LevelManager"):
+		LevelManager.grant_xp("sell", {"item_id": item_id, "crop_id": crop_id, "quantity": quantity, "total_price": total_price})
+
 	stats["total_gold_earned_from_sales"] = int(stats.get("total_gold_earned_from_sales", 0)) + total_price
 	stats["total_items_sold"] = int(stats.get("total_items_sold", 0)) + quantity
 	stats["total_transactions"] = int(stats.get("total_transactions", 0)) + 1
@@ -209,6 +212,9 @@ func get_seed_shop_items() -> Array:
 			continue
 		var unlock_level := int(crop_data.get("unlock_level", 1))
 		var unlocked := GameManager.level >= unlock_level
+		if has_node("/root/LevelManager"):
+			unlock_level = LevelManager.get_crop_unlock_level(crop_id)
+			unlocked = LevelManager.is_crop_unlocked(crop_id)
 		result.append({
 			"item_id": item_id,
 			"crop_id": crop_id,
@@ -317,7 +323,7 @@ func import_save_data(data: Dictionary) -> void:
 	debug_reset_stats()
 	var source_stats: Dictionary = data.get("stats", data)
 	for key in stats.keys():
-		stats[key] = int(source_stats.get(key, stats[key]))
+		stats[key] = maxi(int(source_stats.get(key, stats[key])), 0)
 
 
 func debug_reset_stats() -> void:
@@ -389,4 +395,6 @@ func _is_item_unlocked(item_id: String) -> bool:
 	var crop_data := DataManager.get_crop(crop_id)
 	if crop_data.is_empty():
 		return false
+	if has_node("/root/LevelManager"):
+		return LevelManager.is_crop_unlocked(crop_id)
 	return GameManager.level >= int(crop_data.get("unlock_level", 1))

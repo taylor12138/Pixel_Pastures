@@ -1,6 +1,9 @@
 # inventory-data Specification
 
-## ADDED Requirements
+## Purpose
+This specification defines the inventory-data capability.
+
+## Requirements
 
 ### Requirement: InventoryManager Autoload singleton
 
@@ -183,9 +186,7 @@
 - **WHEN** `debug_clear()` is called in a test scene
 - **THEN** all 20 slots become `null`
 - **AND** compatible summary state in `GameManager.inventory` is cleared
-# inventory-data Specification
 
-## MODIFIED Requirements
 
 ### Requirement: Economy transactions use InventoryManager as item authority
 
@@ -251,3 +252,27 @@ If an inventory operation unexpectedly applies only part of a transaction after 
 - **THEN** `EconomyManager` restores removed items using `InventoryManager.add_item(item_id, removed)`
 - **AND** does not add sale gold
 - **AND** returns `success=false` with `error_code=NOT_ENOUGH_ITEMS`
+
+---
+
+<!-- Synced from prd6-save-system -->
+
+### Requirement: Inventory save data supports slot restoration
+InventoryManager SHALL export and import serializable save data that preserves slot order and selected hotbar state.
+
+#### Scenario: Export inventory save data
+- **WHEN** `InventoryManager.export_save_data()` is called
+- **THEN** it SHALL return a Dictionary containing `slots` and `selected_hotbar`
+- **AND** `slots` SHALL be a deep duplicate of the 20-slot inventory array
+
+#### Scenario: Import inventory save data
+- **WHEN** `InventoryManager.import_save_data(data)` receives save data with `slots` and `selected_hotbar`
+- **THEN** it SHALL restore slot order
+- **AND** it SHALL clamp or reset selected hotbar to a valid index from 0 to 8
+- **AND** it SHALL ensure slot array length is exactly 20
+- **AND** it SHALL synchronize `GameManager.inventory`
+
+#### Scenario: Import malformed inventory data safely
+- **WHEN** `InventoryManager.import_save_data(data)` receives missing, short, long, or malformed slot data
+- **THEN** it SHALL normalize the inventory to exactly 20 slots
+- **AND** invalid or non-positive quantity slots SHALL become `null`

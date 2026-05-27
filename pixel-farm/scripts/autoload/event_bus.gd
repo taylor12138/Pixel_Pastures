@@ -21,6 +21,10 @@ signal transaction_failed(result: Dictionary)
 # ─── 玩家进度 ───
 signal xp_gained(amount: int, source: String)
 signal level_up(new_level: int)
+signal unlocks_changed(unlocks: Dictionary)
+signal crop_unlocked(crop_id: String, level: int)
+signal feature_unlocked(feature_id: String, level: int)
+signal farm_slots_changed(new_slots: int)
 signal achievement_unlocked(achievement_id: String)
 
 # ─── 时间系统 ───
@@ -46,7 +50,12 @@ signal friend_visited(friend_id: String)
 signal crop_stolen(thief_id: String, crop_id: String)
 
 # ─── 游戏状态 ───
-signal game_saved()
-signal game_loaded()
+signal game_saved(slot: int, metadata: Dictionary)
+signal game_loaded(slot: int, metadata: Dictionary)
+signal game_save_failed(slot: int, error_code: String, message: String)
+signal game_load_failed(slot: int, error_code: String, message: String)
+signal save_deleted(slot: int)
+signal auto_save_completed(result: Dictionary)
+signal auto_save_failed(result: Dictionary)
 signal game_paused()
 signal game_resumed()

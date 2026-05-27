@@ -44,6 +44,8 @@ func plant_crop(tile_pos: Vector2i, crop_id: String) -> bool:
 	var crop_config := DataManager.get_crop(crop_id)
 	if crop_config.is_empty():
 		return false
+	if has_node("/root/LevelManager") and not LevelManager.is_crop_unlocked(crop_id):
+		return false
 	var seed_id := "seed_" + crop_id
 	if not InventoryManager.has_item(seed_id):
 		return false
@@ -63,6 +65,8 @@ func plant_crop(tile_pos: Vector2i, crop_id: String) -> bool:
 	_crops[tile_pos] = crop_data
 	_sync_to_game_manager()
 	EventBus.crop_planted.emit(tile_pos, crop_id)
+	if has_node("/root/LevelManager"):
+		LevelManager.grant_xp("plant", {"crop_id": crop_id})
 	return true
 
 
@@ -98,7 +102,10 @@ func harvest_crop(tile_pos: Vector2i) -> String:
 	var added := InventoryManager.add_item("harvest_" + crop_id, 1)
 	if added != 1:
 		return ""
-	GameManager.add_xp(10, "harvest")
+	if has_node("/root/LevelManager"):
+		LevelManager.grant_xp("harvest", {"crop_id": crop_id})
+	else:
+		GameManager.add_xp(10, "harvest")
 	GameManager.stats["total_harvests"] += 1
 	_crops.erase(tile_pos)
 	_sync_to_game_manager()
@@ -204,16 +211,17 @@ func process_offline_time(last_online_timestamp: float) -> void:
 			if crop_config.is_empty():
 				continue
 			var growth_time: float = float(crop_config["growth_time_per_stage"])
-			var elapsed: float = current_time - crop_data["water_timestamp"]
+			var effective_start: float = max(float(last_online_timestamp), float(crop_data["water_timestamp"]))
+			var elapsed: float = current_time - effective_start
 
 			if elapsed >= growth_time:
 				crop_data["stage"] += 1
+				crop_data["watered"] = false
 				if crop_data["stage"] == CropStage.MATURE:
-					crop_data["mature_timestamp"] = crop_data["water_timestamp"] + growth_time
+					crop_data["mature_timestamp"] = effective_start + growth_time
 					EventBus.crop_matured.emit(pos, crop_data["crop_id"])
 				else:
 					# 进入下一阶段，但离线无法浇水，重置 watered
-					crop_data["watered"] = false
 					EventBus.crop_grown.emit(pos, crop_data["crop_id"], crop_data["stage"])
 
 		# 成熟作物：枯萎判定
@@ -236,21 +244,30 @@ func check_wither_all() -> void:
 
 ## 导出所有作物数据
 func export_save_data() -> Dictionary:
-	var save_data: Dictionary = {}
+	var tiles: Dictionary = {}
 	for pos in _crops:
 		var key := "%d,%d" % [pos.x, pos.y]
-		save_data[key] = _crops[pos].duplicate(true)
-	return save_data
+		tiles[key] = _crops[pos].duplicate(true)
+	return {"tiles": tiles}
 
 
 ## 导入作物数据
 func import_save_data(data: Dictionary) -> void:
 	_crops.clear()
-	for key in data:
-		var parts := (key as String).split(",")
-		if parts.size() == 2:
-			var pos := Vector2i(int(parts[0]), int(parts[1]))
-			_crops[pos] = data[key].duplicate(true)
+	var source: Dictionary = {}
+	if data.get("tiles", data) is Dictionary:
+		source = data.get("tiles", data)
+	for key in source:
+		var key_string := str(key)
+		var parts := key_string.split(",")
+		if parts.size() != 2 or not source[key] is Dictionary:
+			continue
+		var crop_data: Dictionary = source[key].duplicate(true)
+		var crop_id := str(crop_data.get("crop_id", ""))
+		if crop_id == "" or DataManager.get_crop(crop_id).is_empty():
+			continue
+		var pos := Vector2i(int(parts[0]), int(parts[1]))
+		_crops[pos] = _normalize_crop_data(crop_data)
 	_sync_to_game_manager()
 
 # ─── 调试接口 ───
@@ -291,6 +308,18 @@ func debug_print_all() -> void:
 			str(d["watered"]), d["water_count"]
 		])
 	print("=== 共 %d 块地 ===" % _crops.size())
+
+func _normalize_crop_data(crop_data: Dictionary) -> Dictionary:
+	return {
+		"crop_id": str(crop_data.get("crop_id", "")),
+		"stage": clampi(int(crop_data.get("stage", CropStage.SEED)), CropStage.SEED, CropStage.WITHERED),
+		"watered": bool(crop_data.get("watered", false)),
+		"water_timestamp": float(crop_data.get("water_timestamp", 0.0)),
+		"water_count": maxi(int(crop_data.get("water_count", 0)), 0),
+		"planted_timestamp": float(crop_data.get("planted_timestamp", Time.get_unix_time_from_system())),
+		"mature_timestamp": float(crop_data.get("mature_timestamp", 0.0)),
+	}
+
 
 # ─── 内部方法 ───
 
@@ -335,10 +364,14 @@ func _check_wither_single(pos: Vector2i, crop_data: Dictionary, current_time: fl
 	if crop_data["stage"] != CropStage.MATURE:
 		return
 	var mature_date := _timestamp_to_date(crop_data["mature_timestamp"])
-	var current_date := _timestamp_to_date(current_time)
+	var current_date := _get_current_date()
 	if _is_different_day(current_date, mature_date):
 		crop_data["stage"] = CropStage.WITHERED
 		EventBus.crop_withered.emit(pos, crop_data["crop_id"])
+
+
+func _get_current_date() -> Dictionary:
+	return _timestamp_to_date(Time.get_unix_time_from_system())
 
 
 func _sync_to_game_manager() -> void:

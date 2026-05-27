@@ -1,6 +1,9 @@
 # item-data Specification
 
-## MODIFIED Requirements
+## Purpose
+This specification defines the item-data capability.
+
+## Requirements
 
 ### Requirement: Item metadata supports inventory stack rules
 
@@ -41,9 +44,7 @@ Item metadata returned by `DataManager.get_item()` SHALL be safe for consumers t
 #### Scenario: Caller mutates returned item data
 - **WHEN** a caller retrieves an item with `DataManager.get_item(item_id)` and mutates the returned dictionary
 - **THEN** a later call to `DataManager.get_item(item_id)` returns the original stored metadata
-# item-data Specification
 
-## MODIFIED Requirements
 
 ### Requirement: Item data provides economy buy price metadata
 

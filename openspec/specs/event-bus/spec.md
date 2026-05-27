@@ -1,4 +1,9 @@
-## ADDED Requirements
+# event-bus Specification
+
+## Purpose
+This specification defines the event-bus capability.
+
+## Requirements
 
 ### Requirement: Crop lifecycle signals
 EventBus SHALL define signals for the complete crop lifecycle: planted, watered, grown, matured, harvested, withered, and cleared.
@@ -58,15 +63,17 @@ EventBus SHALL define signals for inventory state changes.
 - **THEN** EventBus SHALL emit `inventory_full()`
 
 ### Requirement: Level and XP signals
-EventBus SHALL define signals for experience gain and level progression.
+EventBus SHALL define signals for experience gain and level progression while preserving PRD5-compatible signatures.
 
 #### Scenario: XP gained signal emitted
-- **WHEN** the player earns experience points
-- **THEN** EventBus SHALL emit `xp_gained(amount: int, new_total: int)`
+- **WHEN** `LevelManager.add_xp(amount, source)` successfully adds experience points
+- **THEN** EventBus SHALL emit `xp_gained(amount: int, source: String)`
+- **AND** the signal SHALL NOT be emitted for failed XP operations
 
 #### Scenario: Level up signal emitted
-- **WHEN** the player's XP reaches the threshold for the next level
-- **THEN** EventBus SHALL emit `level_up(new_level: int, unlocks: Array)`
+- **WHEN** the player's XP reaches the threshold for the next level and `LevelManager.check_level_up()` raises the level
+- **THEN** EventBus SHALL emit `level_up(new_level: int)` once for each level gained
+- **AND** a multi-level upgrade SHALL emit one `level_up` signal per gained level in ascending order
 
 ### Requirement: Time system signals
 EventBus SHALL define signals for game time progression including hour changes, day changes, season changes, and midnight crossing.
@@ -99,15 +106,35 @@ EventBus SHALL define signals for player interaction start and end.
 - **THEN** EventBus SHALL emit `interaction_ended()`
 
 ### Requirement: Save/Load signals
-EventBus SHALL define signals for save and load operations.
+EventBus SHALL define typed signals for save, load, delete, and auto-save operations.
 
 #### Scenario: Game saved signal emitted
-- **WHEN** the game is successfully saved
-- **THEN** EventBus SHALL emit `game_saved()`
+- **WHEN** the game is successfully saved to a slot
+- **THEN** EventBus SHALL emit `game_saved(slot: int, metadata: Dictionary)`
 
 #### Scenario: Game loaded signal emitted
-- **WHEN** a save file is successfully loaded
-- **THEN** EventBus SHALL emit `game_loaded()`
+- **WHEN** a save file is successfully loaded from a slot
+- **THEN** EventBus SHALL emit `game_loaded(slot: int, metadata: Dictionary)`
+
+#### Scenario: Game save failed signal emitted
+- **WHEN** a manual save operation fails
+- **THEN** EventBus SHALL emit `game_save_failed(slot: int, error_code: String, message: String)`
+- **AND** `error_code` SHALL be a stable non-empty error code
+
+#### Scenario: Game load failed signal emitted
+- **WHEN** a load operation fails
+- **THEN** EventBus SHALL emit `game_load_failed(slot: int, error_code: String, message: String)`
+- **AND** `error_code` SHALL be a stable non-empty error code
+
+#### Scenario: Save deleted signal emitted
+- **WHEN** a save slot delete operation succeeds
+- **THEN** EventBus SHALL emit `save_deleted(slot: int)`
+
+#### Scenario: Auto-save result signal emitted
+- **WHEN** an auto-save operation succeeds
+- **THEN** EventBus SHALL emit `auto_save_completed(result: Dictionary)`
+- **WHEN** an auto-save operation fails
+- **THEN** EventBus SHALL emit `auto_save_failed(result: Dictionary)`
 
 ### Requirement: Signal naming convention
 All EventBus signals SHALL use past tense naming (e.g., `crop_planted` not `plant_crop`) to indicate events that have already occurred.
@@ -119,8 +146,6 @@ All EventBus signals SHALL use past tense naming (e.g., `crop_planted` not `plan
 ---
 
 <!-- Synced from prd3-inventory-system -->
-
-## MODIFIED Requirements
 
 ### Requirement: Inventory and hotbar events are broadcast through EventBus
 
@@ -156,9 +181,6 @@ Inventory-related UI, HUD, economy, and achievement systems SHALL observe invent
 - **WHEN** inventory data changes
 - **THEN** future UI systems can refresh affected slots by listening to `inventory_changed(slot_index)`
 - **AND** they do not need to own or mutate `InventoryManager._slots`
-# event-bus Specification
-
-## MODIFIED Requirements
 
 ### Requirement: Economy transaction events are broadcast through EventBus
 
@@ -201,3 +223,22 @@ Economy UI, HUD, notifications, and future analytics systems SHALL observe econo
 - **WHEN** `EconomyManager.buy_item()` returns a failed transaction
 - **THEN** future UI systems can display the failure by listening to `transaction_failed(result)`
 - **AND** they do not need to parse console logs or inspect private manager state
+
+### Requirement: Level unlock signals are broadcast through EventBus
+`EventBus` SHALL define typed signals for level-system unlock changes: `unlocks_changed(unlocks: Dictionary)`, `crop_unlocked(crop_id: String, level: int)`, `feature_unlocked(feature_id: String, level: int)`, and `farm_slots_changed(new_slots: int)`.
+
+#### Scenario: Unlocks changed signal is emitted for upgrade unlocks
+- **WHEN** `LevelManager.add_xp()` causes one or more level-ups with unlocked content
+- **THEN** `EventBus.unlocks_changed(unlocks: Dictionary)` SHALL be emitted once with the merged unlocks for that XP operation
+
+#### Scenario: Crop unlock signals are emitted per crop
+- **WHEN** a level-up unlocks one or more crops
+- **THEN** `EventBus.crop_unlocked(crop_id: String, level: int)` SHALL be emitted once for each newly unlocked crop
+
+#### Scenario: Feature unlock signals are emitted per feature
+- **WHEN** a level-up unlocks one or more features
+- **THEN** `EventBus.feature_unlocked(feature_id: String, level: int)` SHALL be emitted once for each newly unlocked feature
+
+#### Scenario: Farm slot change is emitted when capacity increases
+- **WHEN** a level-up increases the unlocked farm-slot capacity
+- **THEN** `EventBus.farm_slots_changed(new_slots: int)` SHALL be emitted with the new capacity

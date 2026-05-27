@@ -1,6 +1,9 @@
 # inventory-hotbar Specification
 
-## ADDED Requirements
+## Purpose
+This specification defines the inventory-hotbar capability.
+
+## Requirements
 
 ### Requirement: Hotbar maps to first nine inventory slots
 

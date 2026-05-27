@@ -63,10 +63,19 @@ func can_afford(amount: int) -> bool:
 
 # ─── 经验与等级 ───
 
-func add_xp(amount: int, source: String = "") -> void:
+func add_xp(amount: int, source: String = "") -> Dictionary:
+	if has_node("/root/LevelManager"):
+		return LevelManager.add_xp(amount, source if source != "" else "manual")
 	xp += amount
 	EventBus.xp_gained.emit(amount, source)
 	_check_level_up()
+	return {
+		"success": amount > 0,
+		"xp_added": amount,
+		"xp_before": xp - amount,
+		"xp_after": xp,
+		"level_after": level,
+	}
 
 
 func _check_level_up() -> void:
@@ -150,12 +159,16 @@ func save_game() -> void:
 	var economy_save_data: Dictionary = {}
 	if has_node("/root/EconomyManager"):
 		economy_save_data = EconomyManager.export_save_data()
+	var level_save_data: Dictionary = {}
+	if has_node("/root/LevelManager"):
+		level_save_data = LevelManager.export_save_data()
 	var save_data := {
 		"version": 3,
 		"player_name": player_name,
 		"gold": gold,
 		"xp": xp,
 		"level": level,
+		"level_system": level_save_data,
 		"current_day": current_day,
 		"current_season": current_season,
 		"inventory": inventory,
@@ -173,7 +186,7 @@ func save_game() -> void:
 		return
 	file.store_string(JSON.stringify(save_data, "\t"))
 	file.close()
-	EventBus.game_saved.emit()
+	EventBus.game_saved.emit(0, {})
 	print("[GameManager] Game saved")
 
 
@@ -213,13 +226,16 @@ func load_game() -> bool:
 	if has_node("/root/EconomyManager") and data.has("economy"):
 		var economy_save_data: Dictionary = data.get("economy", {})
 		EconomyManager.import_save_data(economy_save_data)
+	if has_node("/root/LevelManager") and data.has("level_system"):
+		var level_save_data: Dictionary = data.get("level_system", {})
+		LevelManager.import_save_data(level_save_data)
 	farm_data = data.get("farm_data", {})
 	achievements_unlocked = []
 	for ach_id in data.get("achievements_unlocked", []):
 		achievements_unlocked.append(ach_id)
 	stats = data.get("stats", stats)
 
-	EventBus.game_loaded.emit()
+	EventBus.game_loaded.emit(0, {})
 	print("[GameManager] Game loaded (Day %d, Level %d)" % [current_day, level])
 	return true
 
@@ -232,6 +248,41 @@ func delete_save() -> void:
 	if FileAccess.file_exists(SAVE_PATH):
 		DirAccess.remove_absolute(SAVE_PATH)
 		print("[GameManager] Save deleted")
+
+
+func export_save_data() -> Dictionary:
+	return {
+		"state": int(current_state),
+		"player_name": player_name,
+		"gold": gold,
+		"level": level,
+		"xp": xp,
+		"energy": player_energy,
+		"max_energy": player_max_energy,
+		"current_day": current_day,
+		"current_season": current_season,
+		"stats": stats.duplicate(true),
+		"achievements_unlocked": achievements_unlocked.duplicate(true),
+		"last_online_timestamp": Time.get_unix_time_from_system(),
+	}.duplicate(true)
+
+
+func import_save_data(data: Dictionary) -> void:
+	current_state = GameState.PLAYING
+	player_name = str(data.get("player_name", player_name))
+	gold = maxi(int(data.get("gold", gold)), 0)
+	xp = maxi(int(data.get("xp", xp)), 0)
+	level = maxi(int(data.get("level", level)), 1)
+	player_energy = maxi(int(data.get("energy", data.get("player_energy", player_energy))), 0)
+	player_max_energy = maxi(int(data.get("max_energy", data.get("player_max_energy", player_max_energy))), 1)
+	player_energy = mini(player_energy, player_max_energy)
+	current_day = maxi(int(data.get("current_day", current_day)), 1)
+	current_season = str(data.get("current_season", current_season))
+	if data.get("stats", {}) is Dictionary:
+		stats = data.get("stats", {}).duplicate(true)
+	achievements_unlocked.clear()
+	for ach_id in data.get("achievements_unlocked", []):
+		achievements_unlocked.append(str(ach_id))
 
 
 # ─── 游戏状态控制 ───
