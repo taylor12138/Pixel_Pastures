@@ -2,9 +2,7 @@
 
 ## Purpose
 This specification defines the crop-state-machine capability.
-
 ## Requirements
-
 ### Requirement: CropManager Autoload singleton
 CropManager SHALL be registered as a global Autoload singleton, loaded after GameManager, providing crop lifecycle management.
 
@@ -63,12 +61,17 @@ When a crop advances to MATURE stage, CropManager SHALL emit crop_matured(tile_p
 - **AND** `mature_timestamp` SHALL be recorded
 
 ### Requirement: Wither detection
-CropManager SHALL mark MATURE crops as WITHERED when the current natural date differs from the mature date, and emit crop_withered signal.
+CropManager SHALL mark MATURE crops as WITHERED when the game-time day changes after maturity, and emit crop_withered signal. Natural-date or offline compensation checks MAY remain as fallback reconciliation, but game-time midnight SHALL be the primary online wither trigger.
 
-#### Scenario: Mature crop withers after date changes
-- **WHEN** a mature crop's recorded mature date differs from the current natural date
+#### Scenario: Mature crop withers after game midnight
+- **WHEN** a mature crop remains unharvested as TimeManager advances from 23:59 to 00:00
 - **THEN** `CropManager` SHALL mark it as `WITHERED`
 - **AND** emit `EventBus.crop_withered(tile_pos)`
+
+#### Scenario: Offline compensation still reconciles mature crops
+- **WHEN** `CropManager.process_offline_time(last_online_timestamp)` runs after loading a save
+- **THEN** mature crop wither detection SHALL run afterward
+- **AND** mature or withered crop state SHALL be reconciled according to crop lifecycle rules
 
 ### Requirement: Harvest operation
 CropManager.harvest_crop(tile_pos) SHALL add harvest item to inventory, grant harvest XP through LevelManager when available, clear the tile, sync data, and emit crop_harvested signal. Only MATURE crops can be harvested.
@@ -128,3 +131,16 @@ CropManager SHALL export and import all crop tile runtime state through JSON-ser
 - **WHEN** SaveManager successfully loads a save containing crop data and a last-online timestamp
 - **THEN** `CropManager.process_offline_time(last_online_timestamp)` SHALL run after crop data import
 - **AND** mature or withered crop state SHALL be reconciled according to crop lifecycle rules
+
+### Requirement: CropManager listens to game midnight
+CropManager SHALL subscribe to `EventBus.midnight_crossed()` when EventBus is available and SHALL use that game-time event as the primary trigger for mature crop wither checks.
+
+#### Scenario: Midnight triggers wither check
+- **WHEN** `EventBus.midnight_crossed()` is emitted by TimeManager
+- **THEN** `CropManager` SHALL call `check_wither_all()` once for that midnight event
+
+#### Scenario: Existing fallback remains safe
+- **WHEN** CropManager also performs periodic or post-load wither reconciliation
+- **THEN** the fallback SHALL NOT conflict with the midnight event listener
+- **AND** already withered crops SHALL NOT emit duplicate wither side effects for the same state transition
+

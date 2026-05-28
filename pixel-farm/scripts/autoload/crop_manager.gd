@@ -23,6 +23,7 @@ var _check_timer: float = 0.0
 # ─── 生命周期 ───
 
 func _ready() -> void:
+	_connect_time_signals()
 	_load_from_game_manager()
 	print("[CropManager] 初始化完成，已加载 %d 块地作物数据" % _crops.size())
 
@@ -240,6 +241,10 @@ func check_wither_all() -> void:
 			_check_wither_single(pos, crop_data, current_time)
 	_sync_to_game_manager()
 
+
+func _on_midnight_crossed() -> void:
+	check_wither_all()
+
 # ─── 存档集成 ───
 
 ## 导出所有作物数据
@@ -322,6 +327,11 @@ func _normalize_crop_data(crop_data: Dictionary) -> Dictionary:
 
 
 # ─── 内部方法 ───
+
+func _connect_time_signals() -> void:
+	if has_node("/root/EventBus") and not EventBus.midnight_crossed.is_connected(_on_midnight_crossed):
+		EventBus.midnight_crossed.connect(_on_midnight_crossed)
+
 
 func _update_all_crops() -> void:
 	var current_time := Time.get_unix_time_from_system()

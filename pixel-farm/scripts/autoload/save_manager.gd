@@ -89,6 +89,7 @@ func build_save_data(slot: int) -> Dictionary:
 		"slot": slot,
 		"metadata": metadata,
 		"game": _call_manager_export("GameManager"),
+		"time": _call_manager_export("TimeManager"),
 		"inventory": _call_manager_export("InventoryManager"),
 		"crops": _normalize_crop_export(_call_manager_export("CropManager")),
 		"economy": _call_manager_export("EconomyManager"),
@@ -113,6 +114,8 @@ func validate_save_data(data: Variant) -> Dictionary:
 	for dict_field in ["metadata", "game", "inventory", "crops", "economy", "level_system", "settings", "future"]:
 		if not (data.get(dict_field) is Dictionary):
 			return _failure_result("validate", int(data.get("slot", AUTO_SAVE_SLOT)), "", ERR_INVALID_SAVE_DATA, "存档字段类型无效: %s" % dict_field)
+	if data.has("time") and not (data.get("time") is Dictionary):
+		return _failure_result("validate", int(data.get("slot", AUTO_SAVE_SLOT)), "", ERR_INVALID_SAVE_DATA, "存档字段类型无效: time")
 	var slot := int(data.get("slot", AUTO_SAVE_SLOT))
 	if not is_valid_slot(slot):
 		return _failure_result("validate", slot, "", ERR_INVALID_SLOT, "存档槽位无效")
@@ -253,6 +256,11 @@ func apply_save_data(data: Dictionary) -> Dictionary:
 		return validate_result
 	var slot := int(data.get("slot", AUTO_SAVE_SLOT))
 	GameManager.import_save_data(data.get("game", {}))
+	if has_node("/root/TimeManager"):
+		if data.has("time") and data.get("time") is Dictionary:
+			TimeManager.import_save_data(data.get("time", {}))
+		else:
+			TimeManager.initialize_new_game()
 	InventoryManager.import_save_data(data.get("inventory", {}))
 	CropManager.import_save_data(data.get("crops", {}))
 	EconomyManager.import_save_data(data.get("economy", {}))
@@ -392,16 +400,30 @@ func _build_metadata(slot: int, now: float) -> Dictionary:
 	var level := GameManager.level
 	var xp := GameManager.xp
 	var gold := GameManager.gold
+	var time_state := _get_time_metadata()
+	var summary := "Lv.%d | XP %d | Gold %d" % [level, xp, gold]
+	if not time_state.is_empty():
+		summary = "%s | %s %s" % [summary, str(time_state.get("date_text", "")), str(time_state.get("time_text", ""))]
 	return {
 		"level": level,
 		"xp": xp,
 		"gold": gold,
 		"playtime": float(GameManager.stats.get("playtime", 0.0)),
 		"current_scene": scene_path,
-		"summary": "Lv.%d | XP %d | Gold %d" % [level, xp, gold],
+		"summary": summary,
 		"updated_at": now,
 		"auto_save": slot == AUTO_SAVE_SLOT,
+		"date_text": str(time_state.get("date_text", "")),
+		"time_text": str(time_state.get("time_text", "")),
+		"season": str(time_state.get("season", "")),
+		"day": int(time_state.get("day", 0)),
 	}
+
+
+func _get_time_metadata() -> Dictionary:
+	if has_node("/root/TimeManager"):
+		return TimeManager.get_time_state()
+	return {}
 
 
 func _call_manager_export(manager_name: String) -> Dictionary:

@@ -2,11 +2,9 @@
 
 ## Purpose
 This specification defines the game-state capability.
-
 ## Requirements
-
 ### Requirement: Game state management
-GameManager SHALL maintain a `current_state` property using a `GameState` enum with values: `MAIN_MENU`, `PLAYING`, `PAUSED`.
+GameManager SHALL maintain a `current_state` property using a `GameState` enum with values: `MAIN_MENU`, `PLAYING`, `PAUSED`, and SHALL initialize TimeManager to a new-game default time when TimeManager is available.
 
 #### Scenario: Initial state is MAIN_MENU
 - **WHEN** GameManager initializes
@@ -15,6 +13,8 @@ GameManager SHALL maintain a `current_state` property using a `GameState` enum w
 #### Scenario: Start new game transitions to PLAYING
 - **WHEN** `GameManager.start_new_game()` is called
 - **THEN** `current_state` SHALL change to `GameState.PLAYING`
+- **AND** if `TimeManager` is available, `TimeManager.initialize_new_game()` SHALL be called
+- **AND** the new game time SHALL be 第 1 年 `spring` 第 1 天 06:00
 
 #### Scenario: Pause game transitions to PAUSED
 - **WHEN** `GameManager.pause_game()` is called while state is PLAYING
@@ -100,15 +100,17 @@ AudioManager SHALL exist as a registered Autoload with placeholder methods `play
 - **THEN** a warning "AudioManager: 尚未实现 (PRD19)" SHALL be printed and no crash SHALL occur
 
 ### Requirement: Autoload registration in project.godot
-All core Autoloads SHALL be registered in the `[autoload]` section of project.godot in dependency-safe load order including SaveManager after the PRD1-5 gameplay managers.
+All core Autoloads SHALL be registered in the `[autoload]` section of project.godot in dependency-safe load order including TimeManager after EventBus and before systems that consume game-time events, and including SaveManager after the gameplay managers.
 
 #### Scenario: All autoloads accessible
 - **WHEN** any game script runs
-- **THEN** `EventBus`, `DataManager`, `GameManager`, `CropManager`, `InventoryManager`, `EconomyManager`, `LevelManager`, `SceneManager`, `SaveManager`, and `AudioManager` SHALL all be accessible as global singletons when their scripts exist in the project
+- **THEN** `EventBus`, `DataManager`, `GameManager`, `TimeManager`, `CropManager`, `InventoryManager`, `EconomyManager`, `LevelManager`, `SceneManager`, `SaveManager`, and `AudioManager` SHALL all be accessible as global singletons when their scripts exist in the project
 
 #### Scenario: Load order is correct
 - **WHEN** project.godot `[autoload]` section is inspected
-- **THEN** the order SHALL place `SaveManager` after `EventBus`, `DataManager`, `GameManager`, `CropManager`, `InventoryManager`, `EconomyManager`, `LevelManager`, and `SceneManager`
+- **THEN** the order SHALL place `TimeManager` after `EventBus`, `DataManager`, and `GameManager`
+- **AND** it SHALL place `TimeManager` before `CropManager` when feasible so CropManager can subscribe to game-time events during initialization
+- **AND** it SHALL place `SaveManager` after `EventBus`, `DataManager`, `GameManager`, `TimeManager`, `CropManager`, `InventoryManager`, `EconomyManager`, `LevelManager`, and `SceneManager`
 - **AND** it SHALL place `SaveManager` before `AudioManager`
 
 ### Requirement: Initialization logging
@@ -235,3 +237,4 @@ GameManager SHALL expose serializable save export and import behavior for player
 - **WHEN** `GameManager.import_save_data(data)` receives saved core state
 - **THEN** it SHALL restore gold, level, XP, energy, max energy, and stats
 - **AND** it SHALL set runtime state to playing after a successful load
+

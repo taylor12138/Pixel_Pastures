@@ -28,10 +28,15 @@ signal farm_slots_changed(new_slots: int)
 signal achievement_unlocked(achievement_id: String)
 
 # ─── 时间系统 ───
+signal minute_changed(hour: int, minute: int)
 signal hour_changed(new_hour: int)
-signal day_started(day: int)
+signal day_started(year: int, season: String, day: int)
 signal season_changed(new_season: String)
+signal year_changed(new_year: int)
+signal day_phase_changed(new_phase: String)
 signal midnight_crossed()
+signal time_scale_changed(new_scale: float)
+signal time_paused_changed(paused: bool)
 
 # ─── UI 交互 ───
 signal ui_notification(message: String, type: String)

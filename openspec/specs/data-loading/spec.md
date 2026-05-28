@@ -2,9 +2,7 @@
 
 ## Purpose
 This specification defines the data-loading capability.
-
 ## Requirements
-
 ### Requirement: Load all JSON data tables on startup
 DataManager SHALL load all game data files (crops.json, levels.json, items.json, achievements.json) from the `res://data/` directory during `_ready()` and store them as in-memory dictionaries.
 
@@ -35,7 +33,7 @@ DataManager SHALL provide a `get_crop(crop_id: String) -> Dictionary` method tha
 - **THEN** the original data in DataManager SHALL remain unchanged on subsequent queries
 
 ### Requirement: Query crops by season
-DataManager SHALL provide a `get_crops_by_season(season: String) -> Array` method that returns all crops available in the specified season.
+DataManager SHALL provide a `get_crops_by_season(season: String) -> Array` method that returns safe copies of all crops available in the specified season and can be consumed by TimeManager for current-season helper queries.
 
 #### Scenario: Summer crops query
 - **WHEN** `DataManager.get_crops_by_season("summer")` is called
@@ -44,6 +42,11 @@ DataManager SHALL provide a `get_crops_by_season(season: String) -> Array` metho
 #### Scenario: Spring crops query
 - **WHEN** `DataManager.get_crops_by_season("spring")` is called
 - **THEN** the returned Array SHALL contain crop dictionaries for: carrot, potato, strawberry, broccoli (4 crops)
+
+#### Scenario: TimeManager current season crop query uses safe copies
+- **WHEN** `TimeManager.get_current_season_crops()` requests crops for the current season
+- **THEN** the returned Array SHALL contain safe crop data copies from DataManager
+- **AND** mutating the returned Array or Dictionaries SHALL NOT mutate DataManager source data
 
 ### Requirement: Query unlocked crops by player level
 DataManager SHALL provide a `get_unlocked_crops(player_level: int) -> Array` method that returns safe copies of all crops with `unlock_level` less than or equal to the given player level for compatibility, while LevelManager remains the gameplay unlock authority.
@@ -97,3 +100,17 @@ DataManager SHALL provide a read-only query that returns all configured level re
 - **WHEN** `DataManager.get_all_levels()` is called
 - **THEN** it SHALL return all configured level dictionaries
 - **AND** mutating the returned Array or Dictionaries SHALL NOT mutate DataManager source data
+
+### Requirement: TimeManager can query crops by season
+DataManager SHALL expose crop data in a form that allows TimeManager to determine whether a crop can be planted in a specified season without mutating source data.
+
+#### Scenario: TimeManager queries valid crop seasons
+- **WHEN** `TimeManager.can_plant_crop_in_season(crop_id, season_id)` calls `DataManager.get_crop(crop_id)` for a valid crop
+- **THEN** the returned crop Dictionary SHALL include a `seasons` Array
+- **AND** TimeManager SHALL be able to compare `season_id` against that Array
+
+#### Scenario: TimeManager handles missing crop data
+- **WHEN** `TimeManager.can_plant_crop_in_season(crop_id, season_id)` calls `DataManager.get_crop(crop_id)` for an invalid crop
+- **THEN** DataManager SHALL return an empty Dictionary
+- **AND** TimeManager SHALL return `false` without crashing
+

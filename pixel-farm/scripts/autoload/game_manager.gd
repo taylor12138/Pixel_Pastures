@@ -289,6 +289,8 @@ func import_save_data(data: Dictionary) -> void:
 
 func start_new_game(name: String = "农夫") -> void:
 	new_game(name)
+	if has_node("/root/TimeManager"):
+		TimeManager.initialize_new_game()
 	current_state = GameState.PLAYING
 
 
@@ -341,6 +343,8 @@ func new_game(name: String = "农夫") -> void:
 	if has_node("/root/EconomyManager"):
 		EconomyManager.debug_reset_stats()
 	farm_data = {}
+	if has_node("/root/TimeManager"):
+		TimeManager.initialize_new_game()
 	achievements_unlocked = []
 	stats = {
 		"total_harvests": 0,
