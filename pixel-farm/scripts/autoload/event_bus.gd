@@ -38,6 +38,15 @@ signal midnight_crossed()
 signal time_scale_changed(new_scale: float)
 signal time_paused_changed(paused: bool)
 
+# ─── 田园网格系统 ───
+signal farm_grid_initialized(width: int, height: int)
+signal farm_tile_hovered(tile_pos: Vector2i, tile_data: Dictionary)
+signal farm_tile_selected(tile_pos: Vector2i, tile_data: Dictionary)
+signal farm_tile_state_changed(tile_pos: Vector2i, old_state: String, new_state: String)
+signal farm_tile_unlocked(tile_pos: Vector2i)
+signal farm_tile_occupied_changed(tile_pos: Vector2i, occupied: bool)
+signal farm_grid_changed()
+
 # ─── UI 交互 ───
 signal ui_notification(message: String, type: String)
 signal dialog_opened(dialog_id: String)
