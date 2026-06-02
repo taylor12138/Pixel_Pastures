@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3 uid="uid://test_player_controller"]
+
+[ext_resource type="Script" path="res://scenes/test/test_player_controller.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/farm/farm_grid_manager.gd" id="2_grid_manager"]
+[ext_resource type="PackedScene" path="res://scenes/character/player.tscn" id="3_player"]
+
+[node name="TestPlayerController" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="FarmGridManager" type="Node" parent="."]
+script = ExtResource("2_grid_manager")
+
+[node name="Player" parent="." instance=ExtResource("3_player")]
+position = Vector2(136, 216)
+
+[node name="Label" type="Label" parent="."]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 470.0
+offset_bottom = 312.0
+text = "PlayerController 自动化测试运行中..."

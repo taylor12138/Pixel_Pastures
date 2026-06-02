@@ -47,6 +47,16 @@ signal farm_tile_unlocked(tile_pos: Vector2i)
 signal farm_tile_occupied_changed(tile_pos: Vector2i, occupied: bool)
 signal farm_grid_changed()
 
+# ─── 玩家移动与交互 ───
+signal player_spawned(world_pos: Vector2, grid_pos: Vector2i)
+signal player_moved(world_pos: Vector2, grid_pos: Vector2i)
+signal player_direction_changed(direction: String, direction_vector: Vector2i)
+signal player_movement_enabled_changed(enabled: bool)
+signal player_interaction_target_changed(target: Dictionary)
+signal player_interacted(target: Dictionary)
+signal player_interaction_failed(reason: String)
+signal farm_tile_interaction_requested(tile_pos: Vector2i, target: Dictionary)
+
 # ─── UI 交互 ───
 signal ui_notification(message: String, type: String)
 signal dialog_opened(dialog_id: String)

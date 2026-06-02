@@ -87,6 +87,16 @@ pixel-farm/
 4. **SceneManager** - 场景切换
 5. **AudioManager** - 音频播放
 
+## PRD9：角色移动与交互验证
+
+1. 打开 `scenes/farm/farm.tscn`，按 F6 运行当前场景，或按 F5 运行项目主场景。
+2. 画面应显示 30×20 田园网格、蓝色 32×48 玩家占位角色和调试信息。
+3. 使用 W/A/S/D 或方向键移动，玩家应顺滑移动，斜向移动不会明显加速，并且不会离开 480×320 地图边界。
+4. 移动时检查黄色方向标记与调试文本：上、下、左、右应分别对应 `Facing: up`、`Facing: down`、`Facing: left`、`Facing: right`，`Front Tile` 应指向对应方向的相邻格。
+5. 按 E 执行交互。面前地块在地图内时，右侧调试信息应显示 `Interaction: farm tile request ...`；面前格越界或无目标时，应显示 `Interaction: failed no_target`。
+6. 打开并运行 `scenes/test/test_player_controller.tscn`，结果 Label 与输出面板应显示全部 PASS，最终失败数为 0。
+7. 回归运行 `scenes/test/test_farm_grid_manager.tscn` 以及核心管理器测试，确认玩家系统未破坏既有系统。
+
 ## 验证项目运行正常
 
 运行后在 Godot 底部「输出」面板应看到：
@@ -105,6 +115,8 @@ pixel-farm/
 ## 开发状态
 
 - [x] PRD1: 项目骨架 + 核心数据系统
+- [x] PRD8: 田园网格系统
+- [x] PRD9: 角色移动 + 交互系统
 - [ ] PRD2: 时间系统 + 基础种植流程
 - [ ] PRD3: 背包系统
 - [ ] PRD4-28: 后续功能开发中...

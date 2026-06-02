@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://farm_prd8_grid"]
+[gd_scene load_steps=4 format=3 uid="uid://farm_prd8_grid"]
 
 [ext_resource type="Script" path="res://scenes/farm/farm.gd" id="1_farm"]
 [ext_resource type="Script" path="res://scripts/farm/farm_grid_manager.gd" id="2_grid_manager"]
+[ext_resource type="PackedScene" path="res://scenes/character/player.tscn" id="3_player"]
 
 [node name="Farm" type="Node2D"]
 script = ExtResource("1_farm")
@@ -16,6 +17,11 @@ color = Color(0.254902, 0.486275, 0.278431, 1)
 [node name="GridRoot" type="Node2D" parent="."]
 
 [node name="GridCanvas" type="Node2D" parent="GridRoot"]
+
+[node name="EntityLayer" type="Node2D" parent="."]
+
+[node name="Player" parent="EntityLayer" instance=ExtResource("3_player")]
+position = Vector2(136, 216)
 
 [node name="DebugLayer" type="CanvasLayer" parent="."]
 
@@ -32,6 +38,13 @@ offset_top = 32.0
 offset_right = 260.0
 offset_bottom = 128.0
 text = ""
+
+[node name="PlayerDebugLabel" type="Label" parent="DebugLayer"]
+offset_left = 292.0
+offset_top = 8.0
+offset_right = 472.0
+offset_bottom = 128.0
+text = "Player: pending"
 
 [node name="FarmGridManager" type="Node" parent="."]
 script = ExtResource("2_grid_manager")

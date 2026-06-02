@@ -3,10 +3,13 @@ extends Node2D
 
 @onready var farm_grid_manager: Node = $FarmGridManager
 @onready var grid_canvas: Node2D = $GridRoot/GridCanvas
+@onready var player: Node = $EntityLayer/Player
 @onready var coordinate_label: Label = $DebugLayer/CoordinateLabel
 @onready var tile_state_label: Label = $DebugLayer/TileStateLabel
+@onready var player_debug_label: Label = $DebugLayer/PlayerDebugLabel
 
 var _state_cycle: Array[String] = ["empty", "dry_soil", "wet_soil", "occupied"]
+var _last_interaction_message: String = "Interaction: none"
 var _tile_colors := {
 	"grass": Color("#5FAE4D"),
 	"path": Color("#C2A36B"),
@@ -24,8 +27,16 @@ func _ready() -> void:
 	grid_canvas.draw.connect(_on_grid_canvas_draw)
 	if not EventBus.farm_grid_changed.is_connected(_on_farm_grid_changed):
 		EventBus.farm_grid_changed.connect(_on_farm_grid_changed)
+	if not EventBus.player_interacted.is_connected(_on_player_interacted):
+		EventBus.player_interacted.connect(_on_player_interacted)
+	if not EventBus.player_interaction_failed.is_connected(_on_player_interaction_failed):
+		EventBus.player_interaction_failed.connect(_on_player_interaction_failed)
+	if not EventBus.farm_tile_interaction_requested.is_connected(_on_farm_tile_interaction_requested):
+		EventBus.farm_tile_interaction_requested.connect(_on_farm_tile_interaction_requested)
 	farm_grid_manager.initialize_grid()
+	_setup_player()
 	_update_debug_labels(Vector2i(-1, -1))
+	_update_player_debug_label()
 
 
 func _input(event: InputEvent) -> void:
@@ -82,6 +93,48 @@ func _cycle_debug_state(tile_pos: Vector2i) -> void:
 		farm_grid_manager.set_plot_state(tile_pos, next_state)
 
 
+func _process(_delta: float) -> void:
+	_update_player_debug_label()
+
+
+func _setup_player() -> void:
+	if player == null:
+		return
+	if player.has_method("set_farm_grid_manager"):
+		player.call("set_farm_grid_manager", farm_grid_manager)
+	if player.has_method("set_spawn_grid"):
+		player.call("set_spawn_grid", Vector2i(8, 13))
+
+
+func _update_player_debug_label() -> void:
+	if player_debug_label == null or player == null:
+		return
+	var target: Dictionary = {}
+	if player.has_method("get_current_interaction_target"):
+		target = player.call("get_current_interaction_target")
+	var target_text := "Target: none"
+	if not target.is_empty():
+		target_text = "Target: %s %s unlocked=%s" % [
+			str(target.get("type", "")),
+			str(target.get("plot_state", "")),
+			str(target.get("unlocked", false)),
+		]
+	var grid_pos: Vector2i = player.call("get_current_grid_pos") if player.has_method("get_current_grid_pos") else Vector2i.ZERO
+	var front_pos: Vector2i = player.call("get_front_grid_pos") if player.has_method("get_front_grid_pos") else Vector2i.ZERO
+	var facing := str(player.call("get_facing_direction_id")) if player.has_method("get_facing_direction_id") else "down"
+	player_debug_label.text = "Player: (%.0f, %.0f)\nGrid: (%d, %d)\nFacing: %s\nFront Tile: (%d, %d)\n%s\n%s" % [
+		player.global_position.x,
+		player.global_position.y,
+		grid_pos.x,
+		grid_pos.y,
+		facing,
+		front_pos.x,
+		front_pos.y,
+		target_text,
+		_last_interaction_message,
+	]
+
+
 func _update_debug_labels(tile_pos: Vector2i) -> void:
 	if not farm_grid_manager.is_in_map_bounds(tile_pos):
 		coordinate_label.text = "Tile: out of bounds"
@@ -99,6 +152,31 @@ func _update_debug_labels(tile_pos: Vector2i) -> void:
 
 func _on_farm_grid_changed() -> void:
 	grid_canvas.queue_redraw()
+
+
+func _on_player_interacted(target: Dictionary) -> void:
+	_last_interaction_message = "Interaction: success %s %s" % [
+		str(target.get("type", "unknown")),
+		str(target.get("grid_pos", Vector2i(-1, -1))),
+	]
+	print(_last_interaction_message)
+	_update_player_debug_label()
+
+
+func _on_player_interaction_failed(reason: String) -> void:
+	_last_interaction_message = "Interaction: failed %s" % reason
+	print(_last_interaction_message)
+	_update_player_debug_label()
+
+
+func _on_farm_tile_interaction_requested(tile_pos: Vector2i, target: Dictionary) -> void:
+	_last_interaction_message = "Interaction: farm tile request %s state=%s unlocked=%s" % [
+		str(tile_pos),
+		str(target.get("plot_state", "")),
+		str(target.get("unlocked", false)),
+	]
+	print(_last_interaction_message)
+	_update_player_debug_label()
 
 
 func _on_grid_canvas_draw() -> void:
