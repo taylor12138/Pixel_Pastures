@@ -3,10 +3,14 @@ extends Node2D
 
 @onready var farm_grid_manager: Node = $FarmGridManager
 @onready var grid_canvas: Node2D = $GridRoot/GridCanvas
+@onready var crop_overlay: Node2D = $GridRoot/CropOverlay
 @onready var player: Node = $EntityLayer/Player
+@onready var interaction_overlay: Node2D = $InteractionOverlay
+@onready var farm_interaction_controller: Node = $Controllers/FarmInteractionController
 @onready var coordinate_label: Label = $DebugLayer/CoordinateLabel
 @onready var tile_state_label: Label = $DebugLayer/TileStateLabel
 @onready var player_debug_label: Label = $DebugLayer/PlayerDebugLabel
+@onready var interaction_debug_label: Label = $DebugLayer/InteractionDebugLabel
 
 var _state_cycle: Array[String] = ["empty", "dry_soil", "wet_soil", "occupied"]
 var _last_interaction_message: String = "Interaction: none"
@@ -25,21 +29,29 @@ var _tile_colors := {
 
 func _ready() -> void:
 	grid_canvas.draw.connect(_on_grid_canvas_draw)
+	interaction_overlay.draw.connect(_on_interaction_overlay_draw)
 	if not EventBus.farm_grid_changed.is_connected(_on_farm_grid_changed):
 		EventBus.farm_grid_changed.connect(_on_farm_grid_changed)
 	if not EventBus.player_interacted.is_connected(_on_player_interacted):
 		EventBus.player_interacted.connect(_on_player_interacted)
 	if not EventBus.player_interaction_failed.is_connected(_on_player_interaction_failed):
 		EventBus.player_interaction_failed.connect(_on_player_interaction_failed)
-	if not EventBus.farm_tile_interaction_requested.is_connected(_on_farm_tile_interaction_requested):
-		EventBus.farm_tile_interaction_requested.connect(_on_farm_tile_interaction_requested)
+	if not EventBus.farm_interaction_completed.is_connected(_on_farm_interaction_completed):
+		EventBus.farm_interaction_completed.connect(_on_farm_interaction_completed)
+	if not EventBus.farm_interaction_failed.is_connected(_on_farm_interaction_failed):
+		EventBus.farm_interaction_failed.connect(_on_farm_interaction_failed)
 	farm_grid_manager.initialize_grid()
 	_setup_player()
+	_setup_interaction_controller()
 	_update_debug_labels(Vector2i(-1, -1))
 	_update_player_debug_label()
 
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventKey and farm_interaction_controller != null and farm_interaction_controller.has_method("handle_debug_key_event"):
+		if bool(farm_interaction_controller.call("handle_debug_key_event", event)):
+			_update_player_debug_label()
+			return
 	if event is InputEventMouseMotion:
 		_update_hovered_tile_from_mouse()
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -59,14 +71,18 @@ func _update_hovered_tile_from_mouse() -> void:
 		_clear_hovered_tile()
 		return
 	farm_grid_manager.set_hovered_tile(tile_pos)
+	if farm_interaction_controller != null and farm_interaction_controller.has_method("update_action_preview"):
+		farm_interaction_controller.call("update_action_preview", tile_pos)
 	_update_debug_labels(tile_pos)
 	grid_canvas.queue_redraw()
+	interaction_overlay.queue_redraw()
 
 
 func _clear_hovered_tile() -> void:
 	farm_grid_manager.set_hovered_tile(Vector2i(-1, -1))
 	_update_debug_labels(Vector2i(-1, -1))
 	grid_canvas.queue_redraw()
+	interaction_overlay.queue_redraw()
 
 
 func _select_hovered_tile() -> void:
@@ -75,10 +91,15 @@ func _select_hovered_tile() -> void:
 		_clear_hovered_tile()
 		return
 	farm_grid_manager.set_selected_tile(tile_pos)
-	if farm_grid_manager.debug_mode and farm_grid_manager.is_plot_unlocked(tile_pos):
+	if farm_interaction_controller != null and farm_interaction_controller.has_method("request_tile_interaction"):
+		farm_interaction_controller.call("request_tile_interaction", tile_pos, "mouse")
+	elif farm_grid_manager.debug_mode and farm_grid_manager.is_plot_unlocked(tile_pos) and not _tile_has_crop(tile_pos):
 		_cycle_debug_state(tile_pos)
 	_update_debug_labels(tile_pos)
 	grid_canvas.queue_redraw()
+	interaction_overlay.queue_redraw()
+	if crop_overlay != null:
+		crop_overlay.queue_redraw()
 
 
 func _cycle_debug_state(tile_pos: Vector2i) -> void:
@@ -95,6 +116,7 @@ func _cycle_debug_state(tile_pos: Vector2i) -> void:
 
 func _process(_delta: float) -> void:
 	_update_player_debug_label()
+	interaction_overlay.queue_redraw()
 
 
 func _setup_player() -> void:
@@ -104,6 +126,15 @@ func _setup_player() -> void:
 		player.call("set_farm_grid_manager", farm_grid_manager)
 	if player.has_method("set_spawn_grid"):
 		player.call("set_spawn_grid", Vector2i(8, 13))
+
+
+func _setup_interaction_controller() -> void:
+	if farm_interaction_controller == null:
+		return
+	if farm_interaction_controller.has_method("setup"):
+		farm_interaction_controller.call("setup", farm_grid_manager, crop_overlay, interaction_debug_label)
+	if farm_interaction_controller.has_method("select_seed"):
+		farm_interaction_controller.call("select_seed", "carrot")
 
 
 func _update_player_debug_label() -> void:
@@ -152,6 +183,7 @@ func _update_debug_labels(tile_pos: Vector2i) -> void:
 
 func _on_farm_grid_changed() -> void:
 	grid_canvas.queue_redraw()
+	interaction_overlay.queue_redraw()
 
 
 func _on_player_interacted(target: Dictionary) -> void:
@@ -169,18 +201,30 @@ func _on_player_interaction_failed(reason: String) -> void:
 	_update_player_debug_label()
 
 
-func _on_farm_tile_interaction_requested(tile_pos: Vector2i, target: Dictionary) -> void:
-	_last_interaction_message = "Interaction: farm tile request %s state=%s unlocked=%s" % [
-		str(tile_pos),
-		str(target.get("plot_state", "")),
-		str(target.get("unlocked", false)),
+func _on_farm_interaction_completed(result: Dictionary) -> void:
+	_last_interaction_message = "Farm: %s %s" % [
+		str(result.get("action", "")),
+		str(result.get("message", "")),
 	]
+	print(_last_interaction_message)
+	_update_player_debug_label()
+	grid_canvas.queue_redraw()
+	interaction_overlay.queue_redraw()
+	if crop_overlay != null:
+		crop_overlay.queue_redraw()
+
+
+func _on_farm_interaction_failed(result: Dictionary) -> void:
+	_last_interaction_message = "Farm: failed %s" % str(result.get("reason", ""))
 	print(_last_interaction_message)
 	_update_player_debug_label()
 
 
 func _on_grid_canvas_draw() -> void:
 	_draw_map_tiles()
+
+
+func _on_interaction_overlay_draw() -> void:
 	_draw_debug_overlays()
 
 
@@ -194,12 +238,17 @@ func _draw_map_tiles() -> void:
 
 
 func _draw_debug_overlays() -> void:
+	var player_target_tile := _get_player_target_tile()
+	if farm_grid_manager.is_in_map_bounds(player_target_tile):
+		var target_rect := Rect2(farm_grid_manager.grid_to_world(player_target_tile), Vector2.ONE * farm_grid_manager.TILE_SIZE)
+		interaction_overlay.draw_rect(target_rect, Color(0.0, 0.85, 1.0, 0.18), true)
+		interaction_overlay.draw_rect(target_rect, Color(0.0, 0.95, 1.0, 0.95), false, 3.0)
 	if farm_grid_manager.is_in_map_bounds(farm_grid_manager.hovered_tile):
 		var hover_rect := Rect2(farm_grid_manager.grid_to_world(farm_grid_manager.hovered_tile), Vector2.ONE * farm_grid_manager.TILE_SIZE)
-		grid_canvas.draw_rect(hover_rect, Color(1, 1, 1, 0.35), false, 2.0)
+		interaction_overlay.draw_rect(hover_rect, Color(1, 1, 1, 0.35), false, 2.0)
 	if farm_grid_manager.is_in_map_bounds(farm_grid_manager.selected_tile):
 		var selected_rect := Rect2(farm_grid_manager.grid_to_world(farm_grid_manager.selected_tile), Vector2.ONE * farm_grid_manager.TILE_SIZE)
-		grid_canvas.draw_rect(selected_rect, Color(1, 0.9, 0.1, 0.6), false, 2.0)
+		interaction_overlay.draw_rect(selected_rect, Color(1, 0.9, 0.1, 0.6), false, 2.0)
 
 
 func _get_tile_color(tile_pos: Vector2i) -> Color:
@@ -209,3 +258,16 @@ func _get_tile_color(tile_pos: Vector2i) -> Color:
 		return _tile_colors[state]
 	var terrain := str(tile_data.get("terrain_type", "grass"))
 	return _tile_colors.get(terrain, Color.MAGENTA)
+
+
+func _tile_has_crop(tile_pos: Vector2i) -> bool:
+	return has_node("/root/CropManager") and CropManager.has_crop(tile_pos)
+
+
+func _get_player_target_tile() -> Vector2i:
+	if player == null or not player.has_method("get_current_interaction_target"):
+		return Vector2i(-1, -1)
+	var target: Dictionary = player.call("get_current_interaction_target")
+	if target.is_empty() or str(target.get("type", "")) != "farm_tile":
+		return Vector2i(-1, -1)
+	return target.get("grid_pos", Vector2i(-1, -1))

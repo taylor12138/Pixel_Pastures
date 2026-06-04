@@ -97,6 +97,32 @@ pixel-farm/
 6. 打开并运行 `scenes/test/test_player_controller.tscn`，结果 Label 与输出面板应显示全部 PASS，最终失败数为 0。
 7. 回归运行 `scenes/test/test_farm_grid_manager.tscn` 以及核心管理器测试，确认玩家系统未破坏既有系统。
 
+## PRD10：种植 / 浇水 / 收获闭环验证
+
+1. 打开 `scenes/farm/farm.tscn`，按 F6 运行当前场景。
+2. 使用数字键选择临时交互模式：`1` 胡萝卜种子、`2` 白菜种子、`3` 玉米种子、`4` 水壶、`5` 清除模式、`0` 清空选择。
+3. 鼠标左键点击已解锁空地，或让玩家面向地块按 `E`，两种入口都会进入 `FarmInteractionController`。
+4. 基础流程：选择种子 -> 种植 -> 选择水壶 -> 浇水 -> F6 推进当前选中/悬停作物阶段 -> 再次浇水 -> F7 强制成熟 -> 点击或按 `E` 收获。
+5. 枯萎流程：种植后按 F8 强制枯萎，再选择清除模式或直接交互，地块应恢复为空闲且不增加收获物。
+6. 右侧 `InteractionDebugLabel` 会显示当前模式、选中物品、最后结果、目标地块作物阶段、浇水状态和生长进度。
+7. 打开并运行 `scenes/test/test_farm_interaction_controller.tscn`，结果 Label 与输出面板应显示全部 PASS，最终失败数为 0。
+
+## 一键回归测试
+
+打开 `scenes/test/test_regression_runner.tscn`，按 F6 运行当前场景。该场景会顺序运行并汇总以下核心测试：
+
+- `scenes/test/test_crop_manager.tscn`
+- `scenes/test/test_inventory_manager.tscn`
+- `scenes/test/test_level_manager.tscn`
+- `scenes/test/test_economy_manager.tscn`
+- `scenes/test/test_farm_grid_manager.tscn`
+- `scenes/test/test_player_controller.tscn`
+- `scenes/test/test_farm_interaction_controller.tscn`
+- `scenes/test/test_save_manager.tscn`
+- `scenes/test/test_time_manager.tscn`
+
+预期最后显示 `核心回归测试完成: <通过数> 通过, 0 失败`。如需日常频繁回归，可在 Godot 中将 `test_regression_runner.tscn` 临时设为主场景后按 F5。
+
 ## 验证项目运行正常
 
 运行后在 Godot 底部「输出」面板应看到：

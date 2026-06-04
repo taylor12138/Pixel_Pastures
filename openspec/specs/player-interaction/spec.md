@@ -3,9 +3,7 @@
 ## Purpose
 
 本规范定义 PRD9 玩家交互能力，覆盖交互目标结构、面前地块识别、交互输入处理、职责边界、调试显示和测试场景。
-
 ## Requirements
-
 ### Requirement: 玩家交互目标结构
 `PlayerController` MUST 维护当前交互目标，目标数据 MUST 使用可扩展的 Dictionary 结构表达地块、对象或后续扩展目标。
 
@@ -118,3 +116,23 @@
 #### 场景:测试覆盖交互核心行为
 - **当** `test_player_controller.tscn` 运行
 - **那么** 测试 MUST 覆盖初始出生点、面朝方向、当前格、面前格、移动开关、交互开关、交互目标生成、地图外无目标、成功交互、失败交互和 EventBus 信号
+
+### Requirement: Player farm tile requests are consumed by FarmInteractionController
+`PlayerController` MUST continue to broadcast farm-tile requests without owning PRD10 business logic, and `FarmInteractionController` MUST be able to consume those requests.
+
+#### Scenario: Player request triggers farm interaction controller
+- **WHEN** `PlayerController.try_interact()` emits `EventBus.farm_tile_interaction_requested(tile_pos, target)`
+- **AND** `FarmInteractionController` is connected
+- **THEN** `FarmInteractionController` MUST receive the request
+- **AND** it MUST process `tile_pos` through the same business path used by mouse tile interaction
+
+#### Scenario: Player controller remains business-free after PRD10
+- **WHEN** PRD10 is implemented
+- **THEN** `PlayerController` MUST NOT directly call `CropManager.plant_crop()`, `CropManager.water_crop()`, `CropManager.harvest_crop()`, `CropManager.clear_crop()`, `InventoryManager.remove_item()`, `InventoryManager.add_item()`, `FarmGridManager.set_tile_occupied()`, `FarmGridManager.clear_tile()`, or `FarmGridManager.mark_tile_watered()` as part of farm-tile interaction
+
+#### Scenario: Player interaction success may still lead to farm business failure
+- **WHEN** `PlayerController.try_interact()` succeeds because a farm-tile target exists
+- **AND** `FarmInteractionController` rejects the requested action due to `seed_missing`, `crop_not_mature`, or another business reason
+- **THEN** the player-side interaction result MUST remain a valid request
+- **AND** the business failure MUST be reported through `farm_interaction_failed(result)`
+

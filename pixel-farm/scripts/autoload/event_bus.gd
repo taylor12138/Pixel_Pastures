@@ -47,6 +47,12 @@ signal farm_tile_unlocked(tile_pos: Vector2i)
 signal farm_tile_occupied_changed(tile_pos: Vector2i, occupied: bool)
 signal farm_grid_changed()
 
+# ─── 农田交互闭环 ───
+signal farm_interaction_mode_changed(mode: String, selected_item_id: String, selected_crop_id: String)
+signal farm_interaction_completed(result: Dictionary)
+signal farm_interaction_failed(result: Dictionary)
+signal farm_tile_action_preview_changed(tile_pos: Vector2i, action: String, reason: String)
+
 # ─── 玩家移动与交互 ───
 signal player_spawned(world_pos: Vector2, grid_pos: Vector2i)
 signal player_moved(world_pos: Vector2, grid_pos: Vector2i)
