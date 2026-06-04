@@ -1,0 +1,237 @@
+pixel-farm/scenes/test/test_regression_runner.gd
+  317058f75eafa6f3 1-87
+openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/.openspec.yaml
+  317058f75eafa6f3 1-2
+pixel-farm/scenes/test/test_farm_interaction_controller.gd
+  317058f75eafa6f3 1-206
+openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/specs/player-interaction/spec.md
+  317058f75eafa6f3 1-22
+pixel-farm/scenes/test/test_regression_runner.tscn
+  317058f75eafa6f3 1-13
+pixel-farm/scripts/farm/farm_interaction_controller.gd
+  317058f75eafa6f3 1-669
+openspec/specs/inventory-hotbar/spec.md
+  317058f75eafa6f3 76-109
+openspec/specs/game-state/spec.md
+  317058f75eafa6f3 241-286
+pixel-farm/scenes/farm/farm.gd
+  317058f75eafa6f3 6,8-9,13,32,39-42,45,51-54,74-75,78,85,94-96,100-102,119,131-139,186,204-207,211-218,225-227,241-245,248,251,261-273
+pixel-farm/README.md
+  317058f75eafa6f3 100-125
+openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/specs/event-bus/spec.md
+  317058f75eafa6f3 1-40
+openspec/specs/event-bus/spec.md
+  317058f75eafa6f3 366-403
+openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/specs/inventory-hotbar/spec.md
+  317058f75eafa6f3 1-36
+openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/tasks.md
+  317058f75eafa6f3 1-88
+openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/specs/farm-interaction-loop/spec.md
+  317058f75eafa6f3 1-290
+pixel-farm/scenes/test/test_farm_interaction_controller.tscn
+  317058f75eafa6f3 1-25
+pixel-farm/scripts/autoload/event_bus.gd
+  317058f75eafa6f3 50-55
+openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/design.md
+  317058f75eafa6f3 1-82
+openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/specs/farm-grid-system/spec.md
+  317058f75eafa6f3 1-54
+pixel-farm/scripts/farm/crop_overlay.gd
+  317058f75eafa6f3 1-40
+pixel-farm/scenes/farm/farm.tscn
+  317058f75eafa6f3 1,6-7,23-25,31-36,61-66
+openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/proposal.md
+  317058f75eafa6f3 1-37
+openspec/specs/farm-grid-system/spec.md
+  317058f75eafa6f3 296-347
+openspec/specs/farm-interaction-loop/spec.md
+  317058f75eafa6f3 1-288
+openspec/specs/player-interaction/spec.md
+  317058f75eafa6f3 119-138
+prd/prd10.md
+  cf88a67d10bdcca2 1-645
+openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/specs/game-state/spec.md
+  317058f75eafa6f3 1-49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8-ntes.8",
+  "base_commit_sha": "594e19f603a997b0a4b1e817cae7c6741465252f",
+  "prompts": {
+    "317058f75eafa6f3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e8d5c-368b-7a70-a654-d7ffb7b373ce",
+        "model": "gpt-5.5"
+      },
+      "human_author": "linzizhan",
+      "messages": [],
+      "total_additions": 3116,
+      "total_deletions": 91,
+      "accepted_lines": 2342,
+      "overriden_lines": 0,
+      "per_file_stats": {
+        "openspec/specs/farm-grid-system/spec.md": {
+          "additions": 52,
+          "deletions": 2,
+          "accepted_lines": 52
+        },
+        "pixel-farm/scenes/test/test_regression_runner.gd": {
+          "additions": 87,
+          "accepted_lines": 87
+        },
+        "openspec/specs/farm-interaction-loop/spec.md": {
+          "additions": 288,
+          "accepted_lines": 288
+        },
+        "openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/specs/farm-grid-system/spec.md": {
+          "additions": 54,
+          "accepted_lines": 54
+        },
+        "openspec/changes/prd10-farm-interaction-loop/specs/farm-grid-system/spec.md": {
+          "additions": 54
+        },
+        "openspec/changes/prd10-farm-interaction-loop/specs/inventory-hotbar/spec.md": {
+          "additions": 36
+        },
+        "pixel-farm/scripts/farm/crop_overlay.gd": {
+          "additions": 40,
+          "accepted_lines": 40
+        },
+        "openspec/specs/inventory-hotbar/spec.md": {
+          "additions": 34,
+          "deletions": 2,
+          "accepted_lines": 34
+        },
+        "openspec/changes/prd10-farm-interaction-loop/tasks.md": {
+          "additions": 150,
+          "deletions": 62
+        },
+        "openspec/specs/player-interaction/spec.md": {
+          "additions": 20,
+          "deletions": 2,
+          "accepted_lines": 20
+        },
+        "openspec/changes/prd10-farm-interaction-loop/design.md": {
+          "additions": 82
+        },
+        "openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/specs/game-state/spec.md": {
+          "additions": 49,
+          "accepted_lines": 49
+        },
+        "openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/specs/farm-interaction-loop/spec.md": {
+          "additions": 290,
+          "accepted_lines": 290
+        },
+        "openspec/changes/prd10-farm-interaction-loop/specs/player-interaction/spec.md": {
+          "additions": 22
+        },
+        "pixel-farm/scenes/test/test_farm_interaction_controller.gd": {
+          "additions": 206,
+          "accepted_lines": 206
+        },
+        "openspec/specs/event-bus/spec.md": {
+          "additions": 38,
+          "accepted_lines": 38
+        },
+        "openspec/changes/prd10-farm-interaction-loop/specs/farm-interaction-loop/spec.md": {
+          "additions": 290
+        },
+        "openspec/specs/game-state/spec.md": {
+          "additions": 46,
+          "accepted_lines": 46
+        },
+        "pixel-farm/scenes/farm/farm.gd": {
+          "additions": 75,
+          "deletions": 13,
+          "accepted_lines": 72
+        },
+        "pixel-farm/scenes/farm/farm.tscn": {
+          "additions": 20,
+          "deletions": 1,
+          "accepted_lines": 20
+        },
+        "openspec/changes/prd10-farm-interaction-loop/specs/game-state/spec.md": {
+          "additions": 49
+        },
+        "openspec/changes/prd10-farm-interaction-loop/.openspec.yaml": {
+          "additions": 2
+        },
+        "pixel-farm/scripts/farm/farm_interaction_controller.gd": {
+          "additions": 678,
+          "deletions": 9,
+          "accepted_lines": 669
+        },
+        "openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/.openspec.yaml": {
+          "additions": 2,
+          "accepted_lines": 2
+        },
+        "pixel-farm/scripts/autoload/event_bus.gd": {
+          "additions": 6,
+          "accepted_lines": 6
+        },
+        "openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/specs/player-interaction/spec.md": {
+          "additions": 22,
+          "accepted_lines": 22
+        },
+        "openspec/changes/prd10-farm-interaction-loop/specs/event-bus/spec.md": {
+          "additions": 40
+        },
+        "openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/specs/event-bus/spec.md": {
+          "additions": 40,
+          "accepted_lines": 40
+        },
+        "openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/specs/inventory-hotbar/spec.md": {
+          "additions": 36,
+          "accepted_lines": 36
+        },
+        "openspec/changes/prd10-farm-interaction-loop/proposal.md": {
+          "additions": 37
+        },
+        "openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/tasks.md": {
+          "additions": 88,
+          "accepted_lines": 88
+        },
+        "openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/design.md": {
+          "additions": 82,
+          "accepted_lines": 82
+        },
+        "pixel-farm/scenes/test/test_regression_runner.tscn": {
+          "additions": 13,
+          "accepted_lines": 13
+        },
+        "openspec/changes/archive/2026-06-04-prd10-farm-interaction-loop/proposal.md": {
+          "additions": 37,
+          "accepted_lines": 37
+        },
+        "pixel-farm/README.md": {
+          "additions": 26,
+          "accepted_lines": 26
+        },
+        "pixel-farm/scenes/test/test_farm_interaction_controller.tscn": {
+          "additions": 25,
+          "accepted_lines": 25
+        }
+      }
+    },
+    "cf88a67d10bdcca2": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e878d-7d23-7a60-b9ab-f2646ab1f651",
+        "model": "gpt-5.5"
+      },
+      "human_author": "linzizhan",
+      "messages": [],
+      "total_additions": 645,
+      "total_deletions": 0,
+      "accepted_lines": 645,
+      "overriden_lines": 0,
+      "per_file_stats": {
+        "prd/prd10.md": {
+          "additions": 645,
+          "accepted_lines": 645
+        }
+      }
+    }
+  }
+}
