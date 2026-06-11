@@ -145,3 +145,21 @@
 #### 场景:缺少调试 Label 不影响移动
 - **当** 玩家场景中不存在 `DebugLabel` 或田园场景未绑定玩家调试 Label
 - **那么** 玩家移动、方向、坐标和事件逻辑 MUST 继续正常工作
+
+### Requirement: UI 输入阻塞期间禁止玩家移动
+`PlayerController` MUST 响应共享 UI 输入阻塞状态，并在阻塞型功能面板打开时停止玩法移动。
+
+#### 场景:背包打开停止移动
+- **当** `EventBus.ui_input_block_changed(true)` 被发射
+- **那么** PlayerController MUST 停止当前速度
+- **并且** 移动输入 MUST NOT 改变玩家位置
+
+#### 场景:背包关闭恢复打开前状态
+- **当** UI 阻塞开始前玩家移动已启用
+- **并且** 随后发射 `EventBus.ui_input_block_changed(false)`
+- **那么** PlayerController MUST 恢复移动启用状态
+
+#### 场景:不覆盖其他系统的移动锁
+- **当** UI 阻塞开始前玩家移动已经被禁用
+- **并且** UI 阻塞随后结束
+- **那么** PlayerController MUST 保持禁用

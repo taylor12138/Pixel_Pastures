@@ -28,7 +28,7 @@ The viewport SHALL be exactly 480×320 pixels (30×20 tiles at 16px/tile) to mat
 - **THEN** the full scene SHALL be visible within the viewport without scrolling
 
 ### Requirement: InputMap actions registered
-The project SHALL define all gameplay input actions in project.godot, including movement (4 directions), interaction, UI controls, hotbar slots, and zoom.
+The project SHALL define all gameplay input actions in project.godot, including movement (4 directions), interaction, inventory open/cancel controls, UI controls, hotbar slots, and zoom. `open_bag` SHALL be independent from save or system pause actions.
 
 #### Scenario: Movement inputs respond
 - **WHEN** the player presses W, A, S, D or arrow keys
@@ -41,6 +41,15 @@ The project SHALL define all gameplay input actions in project.godot, including 
 #### Scenario: Interact key responds
 - **WHEN** the player presses E
 - **THEN** the `interact` action SHALL be detected
+
+#### Scenario: Inventory open input responds
+- **WHEN** the player presses Tab
+- **THEN** the `open_bag` action SHALL be detected
+- **AND** the action SHALL NOT trigger manual save or system pause behavior
+
+#### Scenario: Cancel inputs respond
+- **WHEN** the player presses Escape or the right mouse button
+- **THEN** the `cancel` action SHALL be detected
 
 #### Scenario: Zoom inputs respond
 - **WHEN** the player scrolls mouse wheel up or down

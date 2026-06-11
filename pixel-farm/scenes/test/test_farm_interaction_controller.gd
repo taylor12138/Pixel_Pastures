@@ -24,6 +24,8 @@ func _ready() -> void:
 	test_clear_withered()
 	test_auto_resolve_priority()
 	test_reconcile_grid_with_crops()
+	test_reconcile_unlocks_legacy_crop_tile()
+	test_reconcile_preserves_unoccupied_soil_states()
 	test_hotbar_sync_and_debug_selection()
 
 	var summary := "=== FarmInteractionController 测试完成: %d 通过, %d 失败 ===" % [_passed, _failed]
@@ -160,15 +162,51 @@ func test_reconcile_grid_with_crops() -> void:
 	_assert(not farm_grid_manager.is_tile_occupied(tile_pos), "reconcile 清理无作物 occupied 地块")
 
 
+func test_reconcile_unlocks_legacy_crop_tile() -> void:
+	_prepare_base_state()
+	var tile_pos := Vector2i(8, 5)
+	CropManager.import_save_data({
+		"tiles": {
+			"8,5": {
+				"crop_id": "carrot",
+				"stage": CropManager.CropStage.SEED,
+				"watered": false,
+			},
+		},
+	})
+	_assert(not farm_grid_manager.is_plot_unlocked(tile_pos), "测试准备：旧存档作物格默认锁定")
+	farm_interaction_controller.reconcile_grid_with_crops()
+	_assert(farm_grid_manager.is_plot_unlocked(tile_pos), "reconcile 解锁旧存档作物格")
+	_assert(farm_grid_manager.is_tile_occupied(tile_pos), "reconcile 将旧存档作物格标记 occupied")
+	_assert(CropManager.has_crop(tile_pos), "reconcile 不删除旧存档作物")
+
+
+func test_reconcile_preserves_unoccupied_soil_states() -> void:
+	_prepare_base_state()
+	var dry_tile := Vector2i(5, 5)
+	var wet_tile := Vector2i(6, 5)
+	farm_grid_manager.set_plot_state(dry_tile, farm_grid_manager.PLOT_DRY_SOIL)
+	farm_grid_manager.set_plot_state(wet_tile, farm_grid_manager.PLOT_DRY_SOIL)
+	farm_grid_manager.mark_tile_watered(wet_tile)
+	farm_interaction_controller.reconcile_grid_with_crops()
+	_assert(farm_grid_manager.get_plot_state(dry_tile) == farm_grid_manager.PLOT_DRY_SOIL, "reconcile 保留无作物 dry_soil")
+	_assert(farm_grid_manager.get_plot_state(wet_tile) == farm_grid_manager.PLOT_WET_SOIL, "reconcile 保留无作物 wet_soil")
+
+
 func test_hotbar_sync_and_debug_selection() -> void:
 	_prepare_base_state()
 	InventoryManager.select_hotbar(0)
 	farm_interaction_controller.sync_selection_from_hotbar()
 	var selection: Dictionary = farm_interaction_controller.get_current_selection()
 	_assert(selection["mode"] == "PLANT" and selection["selected_crop_id"] == "carrot", "快捷栏选中种子同步为 PLANT")
-	var before_slots := InventoryManager.export_save_data()
-	farm_interaction_controller.select_tool("watering_can")
-	_assert(InventoryManager.export_save_data()["slots"] == before_slots["slots"], "debug 选择工具不修改背包槽位")
+	InventoryManager.move_to_slot(0, 9)
+	selection = farm_interaction_controller.get_current_selection()
+	_assert(selection["mode"] == "NONE", "当前快捷栏物品移出后自动清空选择")
+	var debug_tool_event := InputEventKey.new()
+	debug_tool_event.pressed = true
+	debug_tool_event.physical_keycode = KEY_4
+	_assert(not farm_interaction_controller.handle_debug_key_event(debug_tool_event), "默认禁用数字键 4 调试直选")
+	_assert(farm_interaction_controller.get_current_selection()["mode"] == "NONE", "禁用调试直选后不会恢复旧工具")
 
 
 func _prepare_base_state() -> void:

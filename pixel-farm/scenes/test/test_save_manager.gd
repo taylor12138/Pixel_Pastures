@@ -2,6 +2,7 @@ extends Node2D
 ## SaveManager 自动化测试脚本
 
 @onready var label: Label = $Label
+@onready var farm_grid_manager: Node = $FarmGridManager
 
 var _passed: int = 0
 var _failed: int = 0
@@ -26,6 +27,9 @@ func _ready() -> void:
 	test_invalid_slots()
 	test_save_success_and_metadata()
 	test_load_success_round_trip()
+	test_farm_grid_provider_round_trip()
+	test_farm_grid_cache_survives_scene_exit()
+	test_legacy_save_without_farm_grid()
 	test_backup_overwrite()
 	test_listing_metadata_has_save()
 	test_delete_and_empty_delete()
@@ -34,6 +38,7 @@ func _ready() -> void:
 	test_auto_save_and_signals()
 
 	SaveManager.debug_delete_all_saves()
+	SaveManager.debug_reset_farm_grid_state()
 	var summary := "=== SaveManager 测试完成: %d 通过, %d 失败 ===" % [_passed, _failed]
 	print(summary)
 	_results.append(summary)
@@ -69,6 +74,7 @@ func test_save_success_and_metadata() -> void:
 	var data := SaveManager.build_save_data(0)
 	_assert(data.has("schema_version") and data.has("metadata") and data.has("game"), "构建数据包含必要根字段")
 	_assert(data.has("inventory") and data.has("crops") and data.has("economy") and data.has("level_system"), "构建数据包含管理器数据")
+	_assert(data.has("farm_grid") and data["farm_grid"] is Dictionary, "构建数据包含 farm_grid 根字段")
 	_assert(data["metadata"].has("level") and data["metadata"].has("summary"), "元数据包含等级与摘要")
 
 
@@ -90,6 +96,57 @@ func test_load_success_round_trip() -> void:
 	_assert(CropManager.has_crop(Vector2i(2, 3)), "读取恢复作物地块")
 	_assert(EconomyManager.stats["total_transactions"] == 11, "读取恢复经济统计")
 	_assert(_load_signal_count >= 1, "读取成功发射 game_loaded")
+
+
+func test_farm_grid_provider_round_trip() -> void:
+	_reset_runtime_state()
+	farm_grid_manager.initialize_grid()
+	farm_grid_manager.unlock_plots_by_count(20)
+	farm_grid_manager.set_plot_state(Vector2i(5, 5), farm_grid_manager.PLOT_DRY_SOIL)
+	farm_grid_manager.set_plot_state(Vector2i(6, 5), farm_grid_manager.PLOT_DRY_SOIL)
+	farm_grid_manager.mark_tile_watered(Vector2i(6, 5))
+	_assert(not SaveManager.register_farm_grid_manager(farm_grid_manager), "首次注册无缓存时不误报恢复")
+	var save_result := SaveManager.save_game(0)
+	_assert(save_result["success"] == true, "注册 FarmGridManager 后保存成功")
+	farm_grid_manager.initialize_grid()
+	var load_result := SaveManager.load_game(0)
+	_assert(load_result["success"] == true, "活动 FarmGridManager 时加载成功")
+	_assert(farm_grid_manager.get_unlocked_plot_positions().size() == 20, "加载立即恢复扩展解锁数量")
+	_assert(farm_grid_manager.get_plot_state(Vector2i(5, 5)) == farm_grid_manager.PLOT_DRY_SOIL, "加载立即恢复 dry_soil")
+	_assert(farm_grid_manager.get_plot_state(Vector2i(6, 5)) == farm_grid_manager.PLOT_WET_SOIL, "加载立即恢复 wet_soil")
+	SaveManager.unregister_farm_grid_manager(farm_grid_manager)
+
+
+func test_farm_grid_cache_survives_scene_exit() -> void:
+	_reset_runtime_state()
+	farm_grid_manager.initialize_grid()
+	farm_grid_manager.unlock_plots_by_count(18)
+	farm_grid_manager.set_plot_state(Vector2i(5, 5), farm_grid_manager.PLOT_DRY_SOIL)
+	SaveManager.register_farm_grid_manager(farm_grid_manager)
+	SaveManager.unregister_farm_grid_manager(farm_grid_manager)
+	farm_grid_manager.initialize_grid()
+	var restored := SaveManager.register_farm_grid_manager(farm_grid_manager)
+	_assert(restored, "重新进入农场时注册会应用离场缓存")
+	_assert(farm_grid_manager.get_unlocked_plot_positions().size() == 18, "重新进入农场恢复解锁数量")
+	_assert(farm_grid_manager.get_plot_state(Vector2i(5, 5)) == farm_grid_manager.PLOT_DRY_SOIL, "重新进入农场恢复地块状态")
+	SaveManager.unregister_farm_grid_manager(farm_grid_manager)
+	var data := SaveManager.build_save_data(0)
+	_assert(data["farm_grid"]["unlocked_plot_count"] == 18, "离开农场后保存仍保留缓存网格")
+
+
+func test_legacy_save_without_farm_grid() -> void:
+	_reset_runtime_state()
+	var legacy_data := SaveManager.build_save_data(0)
+	legacy_data.erase("farm_grid")
+	_assert(SaveManager.validate_save_data(legacy_data)["success"], "旧存档缺少 farm_grid 仍通过校验")
+	farm_grid_manager.initialize_grid()
+	farm_grid_manager.unlock_plots_by_count(20)
+	SaveManager.register_farm_grid_manager(farm_grid_manager)
+	var apply_result := SaveManager.apply_save_data(legacy_data)
+	_assert(apply_result["success"] == true, "旧存档缺少 farm_grid 仍可应用")
+	_assert(farm_grid_manager.get_unlocked_plot_positions().size() == 12, "活动农场加载旧存档回退默认网格")
+	SaveManager.unregister_farm_grid_manager(farm_grid_manager)
+	SaveManager.debug_reset_farm_grid_state()
 
 
 func test_backup_overwrite() -> void:
@@ -162,6 +219,7 @@ func test_auto_save_and_signals() -> void:
 
 
 func _reset_runtime_state() -> void:
+	SaveManager.debug_reset_farm_grid_state()
 	GameManager.new_game("测试农夫")
 	InventoryManager.debug_clear()
 	CropManager.import_save_data({"tiles": {}})

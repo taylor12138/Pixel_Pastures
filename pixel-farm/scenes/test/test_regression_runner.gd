@@ -6,6 +6,7 @@ extends Node2D
 const TEST_SCENES: Array[Dictionary] = [
 	{"name": "CropManager", "path": "res://scenes/test/test_crop_manager.tscn"},
 	{"name": "InventoryManager", "path": "res://scenes/test/test_inventory_manager.tscn"},
+	{"name": "InventoryPanel", "path": "res://scenes/test/test_inventory_panel.tscn"},
 	{"name": "LevelManager", "path": "res://scenes/test/test_level_manager.tscn"},
 	{"name": "EconomyManager", "path": "res://scenes/test/test_economy_manager.tscn"},
 	{"name": "FarmGridManager", "path": "res://scenes/test/test_farm_grid_manager.tscn"},

@@ -46,6 +46,7 @@ open project.godot
 |------|------|
 | F5 | 运行游戏 |
 | F6 | 运行当前场景 |
+| Tab | 打开/关闭背包 |
 | Esc | 保存游戏（运行时） |
 | Cmd+Q / Alt+F4 | 退出游戏 |
 
@@ -113,6 +114,7 @@ pixel-farm/
 
 - `scenes/test/test_crop_manager.tscn`
 - `scenes/test/test_inventory_manager.tscn`
+- `scenes/test/test_inventory_panel.tscn`
 - `scenes/test/test_level_manager.tscn`
 - `scenes/test/test_economy_manager.tscn`
 - `scenes/test/test_farm_grid_manager.tscn`
@@ -122,6 +124,16 @@ pixel-farm/
 - `scenes/test/test_time_manager.tscn`
 
 预期最后显示 `核心回归测试完成: <通过数> 通过, 0 失败`。如需日常频繁回归，可在 Godot 中将 `test_regression_runner.tscn` 临时设为主场景后按 F5。
+
+## PRD11：背包 UI 验证
+
+1. 在田园场景按 `Tab` 打开背包，面板应显示 5×4 共 20 格，前 9 格标记快捷栏编号。
+2. 点击物品查看详情；使用顶部按钮按种子、收获物、工具、消耗品和装饰筛选。
+3. 拖拽可完成空格移动、同类堆叠和不同物品交换；右键物品或点击“丢弃”会弹出确认框。
+4. 双击前 9 格中的种子或水壶可选择农田操作物；关闭背包后可继续种植或浇水。
+5. 背包打开时角色移动、`E` 交互、农田点击和 PRD10 调试数字键均被阻止，游戏时间不会因此暂停。
+6. 运行 `scenes/test/test_inventory_panel.tscn` 可执行专项测试；`test_inventory_panel_preview.tscn` 用于 480×320 视觉预览。
+7. PRD13 HUD 完成后，由 HUD 统一处理数字键 1-9，并移除 `FarmInteractionController.handle_debug_key_event()` 中 1-5、0 的临时直选逻辑。
 
 ## 验证项目运行正常
 

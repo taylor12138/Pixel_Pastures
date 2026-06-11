@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/test/test_inventory_panel_preview.gd" id="1_preview"]
+[ext_resource type="PackedScene" path="res://scenes/ui/inventory/inventory_panel.tscn" id="2_panel"]
+
+[node name="InventoryPanelPreview" type="Node"]
+script = ExtResource("1_preview")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 480.0
+offset_bottom = 320.0
+color = Color(0.25, 0.49, 0.28, 1)
+
+[node name="InventoryPanel" parent="." instance=ExtResource("2_panel")]

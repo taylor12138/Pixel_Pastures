@@ -57,6 +57,9 @@ var farm_grid_manager: Node = null
 var _last_emitted_world_pos: Vector2 = Vector2.INF
 var _last_emitted_grid_pos: Vector2i = Vector2i(-999999, -999999)
 var _last_target_signature: String = ""
+var _ui_input_blocked: bool = false
+var _move_enabled_before_ui_block: bool = true
+var _interact_enabled_before_ui_block: bool = true
 
 @onready var debug_label: Label = get_node_or_null("DebugLabel") as Label
 @onready var direction_marker: ColorRect = get_node_or_null("BodyPivot/DirectionMarker") as ColorRect
@@ -64,6 +67,13 @@ var _last_target_signature: String = ""
 
 func _ready() -> void:
 	reset_player()
+	if _has_event_bus() and not EventBus.ui_input_block_changed.is_connected(_on_ui_input_block_changed):
+		EventBus.ui_input_block_changed.connect(_on_ui_input_block_changed)
+
+
+func _exit_tree() -> void:
+	if _has_event_bus() and EventBus.ui_input_block_changed.is_connected(_on_ui_input_block_changed):
+		EventBus.ui_input_block_changed.disconnect(_on_ui_input_block_changed)
 
 
 func _physics_process(_delta: float) -> void:
@@ -79,7 +89,7 @@ func _physics_process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("interact"):
+	if not _ui_input_blocked and event.is_action_pressed("interact"):
 		try_interact()
 
 
@@ -237,7 +247,7 @@ func has_interaction_target() -> bool:
 
 ## 尝试执行交互；成功触发事件时返回 true。
 func try_interact() -> bool:
-	if not can_interact:
+	if _ui_input_blocked or not can_interact:
 		_emit_interaction_failed("interaction_disabled")
 		return false
 	update_interaction_target()
@@ -366,6 +376,20 @@ func _emit_direction_changed() -> void:
 func _emit_interaction_failed(reason: String) -> void:
 	if _has_event_bus():
 		EventBus.player_interaction_failed.emit(reason)
+
+
+func _on_ui_input_block_changed(blocked: bool) -> void:
+	if _ui_input_blocked == blocked:
+		return
+	_ui_input_blocked = blocked
+	if blocked:
+		_move_enabled_before_ui_block = can_move
+		_interact_enabled_before_ui_block = can_interact
+		set_can_move(false)
+		set_can_interact(false)
+	else:
+		set_can_move(_move_enabled_before_ui_block)
+		set_can_interact(_interact_enabled_before_ui_block)
 
 
 func _emit_target_changed_if_needed(old_signature: String) -> void:

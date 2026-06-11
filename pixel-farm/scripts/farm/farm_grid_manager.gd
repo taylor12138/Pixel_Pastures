@@ -239,6 +239,7 @@ func set_plot_unlocked(tile_pos: Vector2i, unlocked: bool) -> bool:
 		tile_data["crop_tile_ref"] = ""
 	tile_data["last_updated_at"] = Time.get_unix_time_from_system()
 	tiles[key] = tile_data
+	unlocked_plot_count = get_unlocked_plot_positions().size()
 	if unlocked:
 		_emit_tile_unlocked(tile_pos)
 	_emit_tile_state_changed(tile_pos, old_state, str(tile_data["plot_state"]))

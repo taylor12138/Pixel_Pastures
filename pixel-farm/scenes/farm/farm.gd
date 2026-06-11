@@ -7,6 +7,7 @@ extends Node2D
 @onready var player: Node = $EntityLayer/Player
 @onready var interaction_overlay: Node2D = $InteractionOverlay
 @onready var farm_interaction_controller: Node = $Controllers/FarmInteractionController
+@onready var inventory_panel: Control = $UILayer/InventoryPanel
 @onready var coordinate_label: Label = $DebugLayer/CoordinateLabel
 @onready var tile_state_label: Label = $DebugLayer/TileStateLabel
 @onready var player_debug_label: Label = $DebugLayer/PlayerDebugLabel
@@ -40,23 +41,58 @@ func _ready() -> void:
 		EventBus.farm_interaction_completed.connect(_on_farm_interaction_completed)
 	if not EventBus.farm_interaction_failed.is_connected(_on_farm_interaction_failed):
 		EventBus.farm_interaction_failed.connect(_on_farm_interaction_failed)
-	farm_grid_manager.initialize_grid()
+	if not EventBus.game_loaded.is_connected(_on_game_loaded):
+		EventBus.game_loaded.connect(_on_game_loaded)
+	_load_manual_save()
+	var restored_grid := SaveManager.register_farm_grid_manager(farm_grid_manager)
+	if not restored_grid:
+		farm_grid_manager.initialize_grid()
 	_setup_player()
 	_setup_interaction_controller()
 	_update_debug_labels(Vector2i(-1, -1))
 	_update_player_debug_label()
 
 
+func _exit_tree() -> void:
+	if has_node("/root/SaveManager"):
+		SaveManager.unregister_farm_grid_manager(farm_grid_manager)
+	if has_node("/root/EventBus") and EventBus.game_loaded.is_connected(_on_game_loaded):
+		EventBus.game_loaded.disconnect(_on_game_loaded)
+
+
 func _input(event: InputEvent) -> void:
+	if _is_open_bag_event(event):
+		inventory_panel.call("toggle_panel")
+		get_viewport().set_input_as_handled()
+		return
+	if _is_ui_input_blocked():
+		return
 	if event is InputEventKey and farm_interaction_controller != null and farm_interaction_controller.has_method("handle_debug_key_event"):
 		if bool(farm_interaction_controller.call("handle_debug_key_event", event)):
 			_update_player_debug_label()
 			return
+	if event.is_action_pressed("ui_pause"):
+		_save_manual_game()
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventMouseMotion:
 		_update_hovered_tile_from_mouse()
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		_update_hovered_tile_from_mouse()
 		_select_hovered_tile()
+
+
+func _is_open_bag_event(event: InputEvent) -> bool:
+	if InputMap.has_action("open_bag") and event.is_action_pressed("open_bag"):
+		return true
+	if not event is InputEventKey:
+		return false
+	var key_event := event as InputEventKey
+	return (
+		key_event.pressed
+		and not key_event.echo
+		and (key_event.keycode == KEY_TAB or key_event.physical_keycode == KEY_TAB)
+	)
 
 
 func _notification(what: int) -> void:
@@ -126,6 +162,8 @@ func _setup_player() -> void:
 		player.call("set_farm_grid_manager", farm_grid_manager)
 	if player.has_method("set_spawn_grid"):
 		player.call("set_spawn_grid", Vector2i(8, 13))
+	if inventory_panel != null and inventory_panel.has_method("setup"):
+		inventory_panel.call("setup", farm_interaction_controller, player)
 
 
 func _setup_interaction_controller() -> void:
@@ -135,6 +173,25 @@ func _setup_interaction_controller() -> void:
 		farm_interaction_controller.call("setup", farm_grid_manager, crop_overlay, interaction_debug_label)
 	if farm_interaction_controller.has_method("select_seed"):
 		farm_interaction_controller.call("select_seed", "carrot")
+
+
+func _load_manual_save() -> void:
+	if not SaveManager.has_save(0):
+		return
+	var result: Dictionary = SaveManager.load_game(0)
+	if not bool(result.get("success", false)):
+		push_warning("读取手动存档失败: %s" % str(result.get("message", "")))
+
+
+func _save_manual_game() -> void:
+	var result: Dictionary = SaveManager.save_game(0)
+	if bool(result.get("success", false)):
+		EventBus.ui_notification.emit("游戏已保存", "info")
+		_last_interaction_message = "Save: success"
+	else:
+		EventBus.ui_notification.emit("保存失败", "warning")
+		_last_interaction_message = "Save: failed %s" % str(result.get("error_code", ""))
+	_update_player_debug_label()
 
 
 func _update_player_debug_label() -> void:
@@ -184,6 +241,16 @@ func _update_debug_labels(tile_pos: Vector2i) -> void:
 func _on_farm_grid_changed() -> void:
 	grid_canvas.queue_redraw()
 	interaction_overlay.queue_redraw()
+
+
+func _on_game_loaded(_slot: int, _metadata: Dictionary) -> void:
+	if farm_interaction_controller != null and farm_interaction_controller.has_method("reconcile_grid_with_crops"):
+		farm_interaction_controller.call("reconcile_grid_with_crops")
+	_update_debug_labels(farm_grid_manager.hovered_tile)
+	grid_canvas.queue_redraw()
+	interaction_overlay.queue_redraw()
+	if crop_overlay != null:
+		crop_overlay.queue_redraw()
 
 
 func _on_player_interacted(target: Dictionary) -> void:
@@ -271,3 +338,7 @@ func _get_player_target_tile() -> Vector2i:
 	if target.is_empty() or str(target.get("type", "")) != "farm_tile":
 		return Vector2i(-1, -1)
 	return target.get("grid_pos", Vector2i(-1, -1))
+
+
+func _is_ui_input_blocked() -> bool:
+	return inventory_panel != null and inventory_panel.has_method("is_panel_open") and bool(inventory_panel.call("is_panel_open"))

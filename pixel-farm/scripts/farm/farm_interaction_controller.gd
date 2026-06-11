@@ -32,6 +32,7 @@ const REASON_INVALID_CROP := "invalid_crop"
 
 @export var auto_resolve_action: bool = true
 @export var debug_mode: bool = true
+@export var debug_direct_selection_enabled: bool = false
 @export var default_seed_crop_id: String = "carrot"
 @export var debug_grant_starter_items: bool = true
 @export var debug_starter_seed_count: int = 10
@@ -44,6 +45,7 @@ var last_result: Dictionary = {}
 var farm_grid_manager: Node = null
 var crop_overlay: Node2D = null
 var interaction_debug_label: Label = null
+var ui_input_blocked: bool = false
 
 
 func _ready() -> void:
@@ -55,9 +57,14 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func handle_debug_key_event(event: InputEvent) -> bool:
-	if not debug_mode:
+	if ui_input_blocked or not debug_mode:
 		return false
 	if not event is InputEventKey or not event.pressed or event.echo:
+		return false
+	if (
+		not debug_direct_selection_enabled
+		and event.physical_keycode in [KEY_1, KEY_2, KEY_3, KEY_4]
+	):
 		return false
 	match event.physical_keycode:
 		KEY_1:
@@ -133,6 +140,10 @@ func connect_events() -> void:
 		EventBus.crop_harvested.connect(_on_crop_harvested)
 	if not EventBus.crop_cleared.is_connected(_on_crop_cleared):
 		EventBus.crop_cleared.connect(_on_crop_cleared)
+	if not EventBus.ui_input_block_changed.is_connected(_on_ui_input_block_changed):
+		EventBus.ui_input_block_changed.connect(_on_ui_input_block_changed)
+	if not EventBus.inventory_changed.is_connected(_on_inventory_changed):
+		EventBus.inventory_changed.connect(_on_inventory_changed)
 
 
 func disconnect_events() -> void:
@@ -154,6 +165,10 @@ func disconnect_events() -> void:
 		EventBus.crop_harvested.disconnect(_on_crop_harvested)
 	if EventBus.crop_cleared.is_connected(_on_crop_cleared):
 		EventBus.crop_cleared.disconnect(_on_crop_cleared)
+	if EventBus.ui_input_block_changed.is_connected(_on_ui_input_block_changed):
+		EventBus.ui_input_block_changed.disconnect(_on_ui_input_block_changed)
+	if EventBus.inventory_changed.is_connected(_on_inventory_changed):
+		EventBus.inventory_changed.disconnect(_on_inventory_changed)
 
 
 func select_seed(crop_id: String) -> bool:
@@ -246,6 +261,8 @@ func get_current_selection() -> Dictionary:
 
 
 func request_tile_interaction(tile_pos: Vector2i, source: String = "unknown") -> Dictionary:
+	if ui_input_blocked:
+		return _make_result(false, ACTION_NONE, tile_pos, "", selected_item_id, "ui_input_blocked", "请先关闭背包")
 	var result: Dictionary
 	if auto_resolve_action:
 		result = resolve_action(tile_pos)
@@ -383,10 +400,15 @@ func reconcile_grid_with_crops() -> void:
 		return
 	var all_crops: Dictionary = CropManager.get_all_crops()
 	for tile_pos in all_crops.keys():
-		if tile_pos is Vector2i and farm_grid_manager.is_in_map_bounds(tile_pos):
-			var tile_data: Dictionary = farm_grid_manager.get_tile_data(tile_pos)
-			if not tile_data.is_empty() and bool(tile_data.get("unlocked", false)) and not bool(tile_data.get("occupied", false)):
-				farm_grid_manager.set_tile_occupied(tile_pos, true, farm_grid_manager.tile_pos_to_key(tile_pos))
+		if not tile_pos is Vector2i or not farm_grid_manager.is_in_unlockable_plot_area(tile_pos):
+			continue
+		var tile_data: Dictionary = farm_grid_manager.get_tile_data(tile_pos)
+		if tile_data.is_empty() or str(tile_data.get("terrain_type", "")) != farm_grid_manager.TERRAIN_FARM_PLOT:
+			continue
+		if not bool(tile_data.get("unlocked", false)):
+			farm_grid_manager.set_plot_unlocked(tile_pos, true)
+		if not farm_grid_manager.is_tile_occupied(tile_pos):
+			farm_grid_manager.set_tile_occupied(tile_pos, true, farm_grid_manager.tile_pos_to_key(tile_pos))
 	for tile_pos in farm_grid_manager.get_unlocked_plot_positions():
 		if farm_grid_manager.is_tile_occupied(tile_pos) and not CropManager.has_crop(tile_pos):
 			farm_grid_manager.clear_tile(tile_pos)
@@ -509,7 +531,21 @@ func _emit_mode_changed() -> void:
 
 
 func _on_farm_tile_interaction_requested(tile_pos: Vector2i, _target: Dictionary) -> void:
+	if ui_input_blocked:
+		return
 	request_tile_interaction(tile_pos, "player")
+
+
+func _on_ui_input_block_changed(blocked: bool) -> void:
+	ui_input_blocked = blocked
+
+
+func _on_inventory_changed(slot_index: int) -> void:
+	if (
+		has_node("/root/InventoryManager")
+		and slot_index == InventoryManager.get_selected_hotbar()
+	):
+		sync_selection_from_hotbar()
 
 
 func _on_crop_state_changed(_tile_pos: Vector2i, _crop_id: String = "") -> void:

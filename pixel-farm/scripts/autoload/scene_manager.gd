@@ -51,5 +51,5 @@ func reload_current_scene() -> void:
 
 ## 退出游戏
 func quit_game() -> void:
-	GameManager.save_game()
+	SaveManager.save_game(0)
 	get_tree().quit()

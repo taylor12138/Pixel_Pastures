@@ -67,6 +67,13 @@ signal farm_tile_interaction_requested(tile_pos: Vector2i, target: Dictionary)
 signal ui_notification(message: String, type: String)
 signal dialog_opened(dialog_id: String)
 signal dialog_closed(dialog_id: String)
+signal inventory_panel_opened()
+signal inventory_panel_closed()
+signal inventory_slot_selected(slot_index: int, slot_data: Variant)
+signal inventory_filter_changed(filter_type: String)
+signal inventory_drag_completed(from_index: int, to_index: int, success: bool)
+signal inventory_discard_requested(slot_index: int, item_id: String, quantity: int)
+signal ui_input_block_changed(blocked: bool)
 
 # ─── 背包系统 ───
 signal inventory_changed(slot_index: int)

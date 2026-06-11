@@ -10,7 +10,8 @@ func _ready() -> void:
 	print("[Main] Game starting...")
 
 	# 尝试加载存档
-	var loaded := GameManager.load_game()
+	var load_result := SaveManager.load_game(0) if SaveManager.has_save(0) else {}
+	var loaded := bool(load_result.get("success", false))
 
 	# 更新调试标签
 	_update_debug_info(loaded)
@@ -43,5 +44,5 @@ func _on_level_up(_new_level: int) -> void:
 func _input(event: InputEvent) -> void:
 	# Esc 键暂停/保存
 	if event.is_action_pressed("ui_pause"):
-		GameManager.save_game()
-		EventBus.ui_notification.emit("游戏已保存", "info")
+		var result := SaveManager.save_game(0)
+		EventBus.ui_notification.emit("游戏已保存" if bool(result.get("success", false)) else "保存失败", "info" if bool(result.get("success", false)) else "warning")

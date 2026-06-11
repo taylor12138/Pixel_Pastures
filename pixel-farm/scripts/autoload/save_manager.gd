@@ -24,6 +24,9 @@ var auto_save_enabled: bool = true
 var auto_save_interval: float = 300.0
 var _auto_save_elapsed: float = 0.0
 var _initialized: bool = false
+var _farm_grid_provider: Node = null
+var _farm_grid_cache: Dictionary = {}
+var _has_farm_grid_cache: bool = false
 
 
 func _ready() -> void:
@@ -78,6 +81,27 @@ func get_save_path(slot: int) -> String:
 	return ""
 
 
+func register_farm_grid_manager(manager: Node) -> bool:
+	if not _is_valid_farm_grid_provider(manager):
+		return false
+	_farm_grid_provider = manager
+	if not _has_farm_grid_cache:
+		return false
+	manager.call("import_save_data", _farm_grid_cache.duplicate(true))
+	return true
+
+
+func unregister_farm_grid_manager(manager: Node) -> void:
+	if manager == null or manager != _farm_grid_provider:
+		return
+	_refresh_farm_grid_cache_from_provider()
+	_farm_grid_provider = null
+
+
+func has_cached_farm_grid() -> bool:
+	return _has_farm_grid_cache
+
+
 func build_save_data(slot: int) -> Dictionary:
 	var now := _now_timestamp()
 	var metadata := _build_metadata(slot, now)
@@ -92,6 +116,7 @@ func build_save_data(slot: int) -> Dictionary:
 		"time": _call_manager_export("TimeManager"),
 		"inventory": _call_manager_export("InventoryManager"),
 		"crops": _normalize_crop_export(_call_manager_export("CropManager")),
+		"farm_grid": _export_farm_grid_state(),
 		"economy": _call_manager_export("EconomyManager"),
 		"level_system": _call_manager_export("LevelManager"),
 		"settings": {},
@@ -116,6 +141,8 @@ func validate_save_data(data: Variant) -> Dictionary:
 			return _failure_result("validate", int(data.get("slot", AUTO_SAVE_SLOT)), "", ERR_INVALID_SAVE_DATA, "存档字段类型无效: %s" % dict_field)
 	if data.has("time") and not (data.get("time") is Dictionary):
 		return _failure_result("validate", int(data.get("slot", AUTO_SAVE_SLOT)), "", ERR_INVALID_SAVE_DATA, "存档字段类型无效: time")
+	if data.has("farm_grid") and not (data.get("farm_grid") is Dictionary):
+		return _failure_result("validate", int(data.get("slot", AUTO_SAVE_SLOT)), "", ERR_INVALID_SAVE_DATA, "存档字段类型无效: farm_grid")
 	var slot := int(data.get("slot", AUTO_SAVE_SLOT))
 	if not is_valid_slot(slot):
 		return _failure_result("validate", slot, "", ERR_INVALID_SLOT, "存档槽位无效")
@@ -263,6 +290,7 @@ func apply_save_data(data: Dictionary) -> Dictionary:
 			TimeManager.initialize_new_game()
 	InventoryManager.import_save_data(data.get("inventory", {}))
 	CropManager.import_save_data(data.get("crops", {}))
+	_apply_farm_grid_save_data(data)
 	EconomyManager.import_save_data(data.get("economy", {}))
 	LevelManager.import_save_data(data.get("level_system", {}))
 	var last_online := float(data.get("game", {}).get("last_online_timestamp", data.get("updated_at", _now_timestamp())))
@@ -358,6 +386,12 @@ func debug_print_save_slots() -> void:
 		print(entry)
 
 
+func debug_reset_farm_grid_state() -> void:
+	_farm_grid_provider = null
+	_farm_grid_cache = {}
+	_has_farm_grid_cache = false
+
+
 func _validate_slot_result(operation: String, slot: int) -> Dictionary:
 	if is_valid_slot(slot):
 		return _success_result(operation, slot, get_save_path(slot), {}, "槽位有效")
@@ -439,6 +473,42 @@ func _normalize_crop_export(data: Dictionary) -> Dictionary:
 	if data.has("tiles") and data["tiles"] is Dictionary:
 		return data.duplicate(true)
 	return {"tiles": data.duplicate(true)}
+
+
+func _export_farm_grid_state() -> Dictionary:
+	_refresh_farm_grid_cache_from_provider()
+	if not _has_farm_grid_cache:
+		return {}
+	return _farm_grid_cache.duplicate(true)
+
+
+func _apply_farm_grid_save_data(data: Dictionary) -> void:
+	var farm_grid_data = data.get("farm_grid", {})
+	if data.has("farm_grid") and farm_grid_data is Dictionary and not farm_grid_data.is_empty():
+		_farm_grid_cache = _json_safe(farm_grid_data)
+		_has_farm_grid_cache = true
+	else:
+		_farm_grid_cache = {}
+		_has_farm_grid_cache = false
+	if _is_valid_farm_grid_provider(_farm_grid_provider):
+		_farm_grid_provider.call("import_save_data", _farm_grid_cache.duplicate(true) if _has_farm_grid_cache else {})
+
+
+func _refresh_farm_grid_cache_from_provider() -> void:
+	if not _is_valid_farm_grid_provider(_farm_grid_provider):
+		_farm_grid_provider = null
+		return
+	var exported = _farm_grid_provider.call("export_save_data")
+	if exported is Dictionary and not exported.is_empty():
+		_farm_grid_cache = _json_safe(exported)
+		_has_farm_grid_cache = true
+
+
+func _is_valid_farm_grid_provider(manager: Node) -> bool:
+	return manager != null \
+		and is_instance_valid(manager) \
+		and manager.has_method("export_save_data") \
+		and manager.has_method("import_save_data")
 
 
 func _create_backup_if_needed(slot: int) -> Dictionary:
