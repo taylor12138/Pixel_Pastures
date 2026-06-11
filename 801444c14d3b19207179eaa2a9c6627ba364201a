@@ -1,0 +1,597 @@
+pixel-farm/scenes/test/test_inventory_panel_preview.tscn
+  fff89287e85312d3 1-14
+.roo/commands/opsx-propose.md
+  04075d4ca7a44314 33,42,60,63
+pixel-farm/scenes/test/test_farm_grid_manager.gd
+  ba4b6bf39a1d2802 145-146,159,163
+openspec/specs/farm-grid-system/spec.md
+  ba4b6bf39a1d2802 8,10-19,21-24,49-85,240-267
+.roo/skills/openspec-apply-change/SKILL.md
+  04075d4ca7a44314 9,33,53
+pixel-farm/scenes/test/test_inventory_panel_preview.gd
+  b0dbcebd2ae25605 25-29
+  fff89287e85312d3 1-24
+.roo/commands/opsx-archive.md
+  04075d4ca7a44314 26,29-30,51,66,68,75,78,97,110,123,140
+.roo/skills/openspec-sync-specs/SKILL.md
+  ba4b6bf39a1d2802 1-147
+openspec/specs/project-config/spec.md
+  fff89287e85312d3 31,45-52
+.roo/skills/openspec-ff-change/SKILL.md
+  ba4b6bf39a1d2802 1-102
+.roo/skills/openspec-new-change/SKILL.md
+  ba4b6bf39a1d2802 1-74
+pixel-farm/scripts/ui/inventory/inventory_panel.gd.uid
+  fff89287e85312d3 1
+pixel-farm/scenes/farm/farm.tscn
+  fff89287e85312d3 1,8,39-42
+pixel-farm/scenes/test/test_inventory_panel_preview.gd.uid
+  fff89287e85312d3 1
+.roo/skills/openspec-archive-change/SKILL.md
+  04075d4ca7a44314 9,33,36-37,58,73,75,82,85,104
+pixel-farm/scenes/test/test_inventory_panel.gd.uid
+  fff89287e85312d3 1
+.roo/skills/openspec-explore/SKILL.md
+  04075d4ca7a44314 9,105-108
+pixel-farm/scripts/autoload/scene_manager.gd
+  ba4b6bf39a1d2802 54
+pixel-farm/scenes/test/test_regression_runner.gd
+  fff89287e85312d3 9
+.roo/skills/openspec-propose/SKILL.md
+  04075d4ca7a44314 9,40,49,67,70
+pixel-farm/scripts/character/player_controller.gd
+  fff89287e85312d3 60-62,70-71,74-76,92,250,381-392
+.roo/commands/opsx-sync.md
+  04075d4ca7a44314 1-140
+pixel-farm/scenes/test/test_save_manager.tscn
+  ba4b6bf39a1d2802 1,4,13-15
+.roo/skills/openspec-continue-change/SKILL.md
+  ba4b6bf39a1d2802 1-119
+.roo/commands/opsx-ff.md
+  04075d4ca7a44314 1-95
+pixel-farm/scripts/autoload/save_manager.gd
+  ba4b6bf39a1d2802 27-29,84-104,119,144-145,293,389-394,478-511
+pixel-farm/scenes/test/test_inventory_panel.gd
+  fff89287e85312d3 1-47,53-85,93-157,160-165,176-177,185-253
+  b0dbcebd2ae25605 48-52,86-92,158-159,166-175,178-184
+pixel-farm/scenes/main/main.gd
+  ba4b6bf39a1d2802 13-14,47-48
+openspec/specs/inventory-ui/spec.md
+  fff89287e85312d3 1-166
+.roo/commands/opsx-new.md
+  04075d4ca7a44314 1-66
+pixel-farm/project.godot
+  b0dbcebd2ae25605 74
+  fff89287e85312d3 15,72-73,75-80
+openspec/specs/event-bus/spec.md
+  fff89287e85312d3 404-429
+pixel-farm/scenes/test/test_inventory_panel.tscn
+  fff89287e85312d3 1-26
+pixel-farm/scripts/ui/inventory/inventory_slot.gd
+  fff89287e85312d3 1-101,103-207,211-235
+  b0dbcebd2ae25605 102,208-210
+.roo/commands/opsx-continue.md
+  04075d4ca7a44314 1-112
+pixel-farm/scripts/farm/farm_grid_manager.gd
+  ba4b6bf39a1d2802 242
+.roo/commands/opsx-verify.md
+  04075d4ca7a44314 1-164
+.roo/skills/openspec-verify-change/SKILL.md
+  ba4b6bf39a1d2802 1-171
+pixel-farm/scripts/farm/farm_interaction_controller.gd
+  fff89287e85312d3 48,60,143-144,168-169,264-265,534-535,539-540
+  ba4b6bf39a1d2802 403-411
+  b0dbcebd2ae25605 35,64-68,145-146,170-171,541-548
+openspec/specs/inventory-hotbar/spec.md
+  fff89287e85312d3 78,92,96-97,99-108
+pixel-farm/scenes/ui/inventory/inventory_slot.tscn
+  fff89287e85312d3 1-79
+openspec/specs/player-movement/spec.md
+  fff89287e85312d3 148-165
+openspec/specs/farm-interaction-loop/spec.md
+  ba4b6bf39a1d2802 260,264,268-275,277,281-285,287-293,295-296,299,310-316
+  fff89287e85312d3 318-340
+prd/prd11.md
+  fff89287e85312d3 1-1000
+pixel-farm/scenes/test/test_farm_interaction_controller.gd
+  b0dbcebd2ae25605 202-209
+  ba4b6bf39a1d2802 27-28,165-193
+pixel-farm/scenes/ui/inventory/inventory_panel.tscn
+  fff89287e85312d3 1-220
+pixel-farm/scenes/test/test_save_manager.gd
+  ba4b6bf39a1d2802 5,30-32,41,77,101-151,222
+pixel-farm/README.md
+  b0dbcebd2ae25605 49,117,128-136
+pixel-farm/scripts/ui/inventory/inventory_slot.gd.uid
+  fff89287e85312d3 1
+.roo/commands/opsx-apply.md
+  04075d4ca7a44314 26,46
+pixel-farm/scenes/farm/farm.gd
+  ba4b6bf39a1d2802 44-49,56-62,74-77,178-194,246-249,252-253
+  b0dbcebd2ae25605 64,85-95
+  fff89287e85312d3 10,65-69,165-166,341-344
+openspec/specs/save-system/spec.md
+  ba4b6bf39a1d2802 35,37,39,46,48-52,55,65-66,86,88-91,94-97,105-110,115,120,123,133-135,275-296
+pixel-farm/scripts/ui/inventory/inventory_panel.gd
+  b0dbcebd2ae25605 70,76-88,195-201,267,415-420
+  fff89287e85312d3 1-69,71-75,89-194,202-266,268-414,421-478
+.roo/commands/opsx-explore.md
+  04075d4ca7a44314 107-110
+pixel-farm/scripts/autoload/event_bus.gd
+  fff89287e85312d3 70-76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8-ntes.9",
+  "base_commit_sha": "801444c14d3b19207179eaa2a9c6627ba364201a",
+  "prompts": {
+    "04075d4ca7a44314": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "rollout-2026-06-10T19-44-48-019eb159-6d47-7600-9e6b-8bfd0163a2e6",
+        "model": "unknown"
+      },
+      "human_author": "linzizhan",
+      "messages": [],
+      "total_additions": 665,
+      "total_deletions": 52,
+      "accepted_lines": 624,
+      "overriden_lines": 0,
+      "per_file_stats": {
+        ".roo/commands/opsx-new.md": {
+          "additions": 66,
+          "accepted_lines": 66
+        },
+        ".roo/commands/opsx-verify.md": {
+          "additions": 164,
+          "accepted_lines": 164
+        },
+        "openspec/changes/persist-farm-grid-state/tasks.md": {
+          "additions": 17,
+          "deletions": 17
+        },
+        ".roo/commands/opsx-apply.md": {
+          "additions": 3,
+          "accepted_lines": 3
+        },
+        ".roo/commands/opsx-continue.md": {
+          "additions": 112,
+          "accepted_lines": 112
+        },
+        ".roo/skills/openspec-propose/SKILL.md": {
+          "additions": 5,
+          "deletions": 4,
+          "accepted_lines": 5
+        },
+        ".roo/commands/opsx-archive.md": {
+          "additions": 12,
+          "deletions": 9,
+          "accepted_lines": 12
+        },
+        ".roo/skills/openspec-apply-change/SKILL.md": {
+          "additions": 4,
+          "deletions": 1,
+          "accepted_lines": 4
+        },
+        ".roo/skills/openspec-explore/SKILL.md": {
+          "additions": 5,
+          "deletions": 6,
+          "accepted_lines": 5
+        },
+        ".roo/commands/opsx-propose.md": {
+          "additions": 4,
+          "deletions": 3,
+          "accepted_lines": 4
+        },
+        ".roo/commands/opsx-sync.md": {
+          "additions": 140,
+          "accepted_lines": 140
+        },
+        ".roo/commands/opsx-explore.md": {
+          "additions": 4,
+          "deletions": 5,
+          "accepted_lines": 4
+        },
+        ".roo/commands/opsx-ff.md": {
+          "additions": 95,
+          "accepted_lines": 95
+        },
+        ".roo/skills/openspec-archive-change/SKILL.md": {
+          "additions": 10,
+          "deletions": 7,
+          "accepted_lines": 10
+        },
+        "pixel-farm/scenes/farm/farm.gd": {
+          "additions": 24
+        }
+      }
+    },
+    "b0dbcebd2ae25605": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "rollout-2026-06-10T20-42-33-019eb18e-4b61-75a1-8e50-ce1cb20e8017",
+        "model": "unknown"
+      },
+      "human_author": "linzizhan",
+      "messages": [],
+      "total_additions": 230,
+      "total_deletions": 103,
+      "accepted_lines": 125,
+      "overriden_lines": 0,
+      "per_file_stats": {
+        "pixel-farm/scenes/farm/farm.gd": {
+          "additions": 27,
+          "deletions": 1,
+          "accepted_lines": 14
+        },
+        "pixel-farm/scenes/test/test_inventory_panel.gd": {
+          "additions": 38,
+          "deletions": 7,
+          "accepted_lines": 31
+        },
+        "pixel-farm/project.godot": {
+          "additions": 2,
+          "deletions": 2,
+          "accepted_lines": 1
+        },
+        "pixel-farm/scripts/ui/inventory/inventory_slot.gd": {
+          "additions": 4,
+          "deletions": 4,
+          "accepted_lines": 4
+        },
+        "pixel-farm/scenes/test/test_inventory_panel_preview.gd": {
+          "additions": 5,
+          "accepted_lines": 5
+        },
+        "pixel-farm/scripts/ui/inventory/inventory_panel.gd": {
+          "additions": 28,
+          "deletions": 27,
+          "accepted_lines": 28
+        },
+        "openspec/specs/farm-interaction-loop/spec.md": {
+          "additions": 23
+        },
+        "pixel-farm/scripts/farm/farm_interaction_controller.gd": {
+          "additions": 32,
+          "deletions": 1,
+          "accepted_lines": 18
+        },
+        "openspec/changes/add-inventory-ui/tasks.md": {
+          "additions": 47,
+          "deletions": 47
+        },
+        "pixel-farm/scenes/test/test_farm_interaction_controller.gd": {
+          "additions": 8,
+          "deletions": 3,
+          "accepted_lines": 8
+        },
+        "pixel-farm/README.md": {
+          "additions": 16,
+          "deletions": 11,
+          "accepted_lines": 16
+        }
+      }
+    },
+    "ba4b6bf39a1d2802": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019eb159-6d47-7600-9e6b-8bfd0163a2e6",
+        "model": "gpt-5.5"
+      },
+      "human_author": "linzizhan",
+      "messages": [],
+      "total_additions": 2082,
+      "total_deletions": 126,
+      "accepted_lines": 1020,
+      "overriden_lines": 0,
+      "per_file_stats": {
+        ".roo/skills/openspec-new-change/SKILL.md": {
+          "additions": 74,
+          "accepted_lines": 74
+        },
+        ".roo/commands/opsx-verify.md": {
+          "additions": 164
+        },
+        ".roo/skills/openspec-ff-change/SKILL.md": {
+          "additions": 102,
+          "accepted_lines": 102
+        },
+        ".roo/commands/opsx-new.md": {
+          "additions": 66
+        },
+        "pixel-farm/scenes/test/test_farm_interaction_controller.gd": {
+          "additions": 33,
+          "accepted_lines": 33
+        },
+        ".roo/commands/opsx-continue.md": {
+          "additions": 112
+        },
+        ".roo/skills/openspec-explore/SKILL.md": {
+          "additions": 5,
+          "deletions": 6
+        },
+        "openspec/changes/persist-farm-grid-state/design.md": {
+          "additions": 102
+        },
+        "pixel-farm/scripts/farm/farm_interaction_controller.gd": {
+          "additions": 9,
+          "deletions": 4,
+          "accepted_lines": 9
+        },
+        "openspec/changes/persist-farm-grid-state/tasks.md": {
+          "additions": 28
+        },
+        ".roo/commands/opsx-archive.md": {
+          "additions": 12,
+          "deletions": 9
+        },
+        "pixel-farm/scenes/test/test_save_manager.tscn": {
+          "additions": 5,
+          "deletions": 1,
+          "accepted_lines": 5
+        },
+        "pixel-farm/scenes/main/main.gd": {
+          "additions": 4,
+          "deletions": 3,
+          "accepted_lines": 4
+        },
+        "openspec/specs/farm-interaction-loop/spec.md": {
+          "additions": 35,
+          "deletions": 6,
+          "accepted_lines": 35
+        },
+        "openspec/specs/save-system/spec.md": {
+          "additions": 59,
+          "deletions": 13,
+          "accepted_lines": 59
+        },
+        ".roo/commands/opsx-ff.md": {
+          "additions": 95
+        },
+        "openspec/specs/farm-grid-system/spec.md": {
+          "additions": 82,
+          "deletions": 62,
+          "accepted_lines": 82
+        },
+        ".roo/skills/openspec-archive-change/SKILL.md": {
+          "additions": 10,
+          "deletions": 7
+        },
+        "pixel-farm/scripts/autoload/scene_manager.gd": {
+          "additions": 1,
+          "deletions": 1,
+          "accepted_lines": 1
+        },
+        "pixel-farm/scripts/farm/farm_grid_manager.gd": {
+          "additions": 1,
+          "accepted_lines": 1
+        },
+        ".roo/skills/openspec-verify-change/SKILL.md": {
+          "additions": 171,
+          "accepted_lines": 171
+        },
+        "openspec/changes/persist-farm-grid-state/proposal.md": {
+          "additions": 31
+        },
+        "openspec/changes/persist-farm-grid-state/specs/save-system/spec.md": {
+          "additions": 126
+        },
+        ".roo/commands/opsx-apply.md": {
+          "additions": 3
+        },
+        "pixel-farm/scenes/test/test_save_manager.gd": {
+          "additions": 58,
+          "accepted_lines": 58
+        },
+        ".roo/skills/openspec-propose/SKILL.md": {
+          "additions": 5,
+          "deletions": 4
+        },
+        "openspec/changes/persist-farm-grid-state/specs/farm-grid-system/spec.md": {
+          "additions": 89
+        },
+        ".roo/skills/openspec-sync-specs/SKILL.md": {
+          "additions": 147,
+          "accepted_lines": 147
+        },
+        ".roo/commands/opsx-propose.md": {
+          "additions": 4,
+          "deletions": 3
+        },
+        "pixel-farm/scenes/farm/farm.gd": {
+          "additions": 46,
+          "deletions": 1,
+          "accepted_lines": 46
+        },
+        ".roo/skills/openspec-continue-change/SKILL.md": {
+          "additions": 119,
+          "accepted_lines": 119
+        },
+        "pixel-farm/scenes/test/test_farm_grid_manager.gd": {
+          "additions": 4,
+          "accepted_lines": 4
+        },
+        ".roo/commands/opsx-sync.md": {
+          "additions": 140
+        },
+        "pixel-farm/scripts/autoload/save_manager.gd": {
+          "additions": 70,
+          "accepted_lines": 70
+        },
+        ".roo/skills/openspec-apply-change/SKILL.md": {
+          "additions": 4,
+          "deletions": 1
+        },
+        "openspec/changes/persist-farm-grid-state/.openspec.yaml": {
+          "additions": 2
+        },
+        "openspec/changes/persist-farm-grid-state/specs/farm-interaction-loop/spec.md": {
+          "additions": 60
+        },
+        ".roo/commands/opsx-explore.md": {
+          "additions": 4,
+          "deletions": 5
+        }
+      }
+    },
+    "fff89287e85312d3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019eb18e-4b61-75a1-8e50-ce1cb20e8017",
+        "model": "gpt-5.5"
+      },
+      "human_author": "linzizhan",
+      "messages": [],
+      "total_additions": 3153,
+      "total_deletions": 36,
+      "accepted_lines": 2606,
+      "overriden_lines": 0,
+      "per_file_stats": {
+        "pixel-farm/scripts/farm/farm_interaction_controller.gd": {
+          "additions": 14,
+          "deletions": 1,
+          "accepted_lines": 14
+        },
+        "pixel-farm/scenes/ui/inventory/inventory_panel.tscn": {
+          "additions": 220,
+          "accepted_lines": 220
+        },
+        "pixel-farm/scenes/farm/farm.tscn": {
+          "additions": 7,
+          "deletions": 1,
+          "accepted_lines": 7
+        },
+        "pixel-farm/scripts/ui/inventory/inventory_slot.gd.uid": {
+          "additions": 1,
+          "accepted_lines": 1
+        },
+        "openspec/changes/add-inventory-ui/specs/event-bus/spec.md": {
+          "additions": 28
+        },
+        "openspec/changes/add-inventory-ui/specs/inventory-hotbar/spec.md": {
+          "additions": 34
+        },
+        "openspec/changes/add-inventory-ui/proposal.md": {
+          "additions": 40
+        },
+        "pixel-farm/scenes/test/test_regression_runner.gd": {
+          "additions": 1,
+          "accepted_lines": 1
+        },
+        "pixel-farm/scenes/test/test_inventory_panel_preview.gd": {
+          "additions": 24,
+          "accepted_lines": 24
+        },
+        "pixel-farm/project.godot": {
+          "additions": 12,
+          "deletions": 1,
+          "accepted_lines": 11
+        },
+        "openspec/changes/add-inventory-ui/specs/farm-interaction-loop/spec.md": {
+          "additions": 25
+        },
+        "pixel-farm/scenes/test/test_inventory_panel_preview.gd.uid": {
+          "additions": 1,
+          "accepted_lines": 1
+        },
+        "openspec/changes/add-inventory-ui/tasks.md": {
+          "additions": 70
+        },
+        "openspec/changes/add-inventory-ui/.openspec.yaml": {
+          "additions": 2
+        },
+        "openspec/specs/inventory-ui/spec.md": {
+          "additions": 166,
+          "accepted_lines": 166
+        },
+        "pixel-farm/scripts/ui/inventory/inventory_panel.gd": {
+          "additions": 477,
+          "deletions": 26,
+          "accepted_lines": 450
+        },
+        "pixel-farm/scenes/test/test_inventory_panel.gd.uid": {
+          "additions": 1,
+          "accepted_lines": 1
+        },
+        "pixel-farm/scripts/autoload/event_bus.gd": {
+          "additions": 7,
+          "accepted_lines": 7
+        },
+        "prd/prd11.md": {
+          "additions": 1000,
+          "accepted_lines": 1000
+        },
+        "pixel-farm/scripts/ui/inventory/inventory_panel.gd.uid": {
+          "additions": 1,
+          "accepted_lines": 1
+        },
+        "openspec/specs/farm-interaction-loop/spec.md": {
+          "additions": 23,
+          "accepted_lines": 23
+        },
+        "pixel-farm/README.md": {
+          "additions": 7
+        },
+        "openspec/changes/add-inventory-ui/specs/player-movement/spec.md": {
+          "additions": 19
+        },
+        "pixel-farm/scenes/test/test_inventory_panel.gd": {
+          "additions": 222,
+          "accepted_lines": 222
+        },
+        "pixel-farm/scenes/farm/farm.gd": {
+          "additions": 13,
+          "accepted_lines": 12
+        },
+        "pixel-farm/scenes/test/test_inventory_panel.tscn": {
+          "additions": 26,
+          "accepted_lines": 26
+        },
+        "openspec/changes/add-inventory-ui/design.md": {
+          "additions": 100
+        },
+        "openspec/specs/inventory-hotbar/spec.md": {
+          "additions": 15,
+          "deletions": 4,
+          "accepted_lines": 15
+        },
+        "pixel-farm/scenes/test/test_inventory_panel_preview.tscn": {
+          "additions": 14,
+          "accepted_lines": 14
+        },
+        "pixel-farm/scenes/ui/inventory/inventory_slot.tscn": {
+          "additions": 79,
+          "accepted_lines": 79
+        },
+        "openspec/specs/event-bus/spec.md": {
+          "additions": 26,
+          "accepted_lines": 26
+        },
+        "pixel-farm/scripts/ui/inventory/inventory_slot.gd": {
+          "additions": 235,
+          "accepted_lines": 231
+        },
+        "openspec/specs/project-config/spec.md": {
+          "additions": 10,
+          "deletions": 1,
+          "accepted_lines": 10
+        },
+        "openspec/changes/add-inventory-ui/specs/inventory-ui/spec.md": {
+          "additions": 160
+        },
+        "pixel-farm/scripts/character/player_controller.gd": {
+          "additions": 26,
+          "deletions": 2,
+          "accepted_lines": 26
+        },
+        "openspec/changes/add-inventory-ui/specs/project-config/spec.md": {
+          "additions": 29
+        },
+        "openspec/specs/player-movement/spec.md": {
+          "additions": 18,
+          "accepted_lines": 18
+        }
+      }
+    }
+  }
+}
