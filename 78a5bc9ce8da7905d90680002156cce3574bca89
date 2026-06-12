@@ -1,0 +1,184 @@
+pixel-farm/scenes/ui/shop/shop_item_row.tscn
+  cb26db6142a0973a 1-63
+pixel-farm/scripts/ui/shop/shop_panel.gd
+  cb26db6142a0973a 1-587
+pixel-farm/scenes/shop/shop.tscn
+  cb26db6142a0973a 1-39
+openspec/specs/event-bus/spec.md
+  cb26db6142a0973a 430-460
+pixel-farm/scenes/test/test_regression_runner.gd
+  cb26db6142a0973a 10
+pixel-farm/scripts/ui/shop/shop_item_row.gd
+  cb26db6142a0973a 1-140
+pixel-farm/scenes/ui/shop/shop_panel.tscn
+  cb26db6142a0973a 1-236
+pixel-farm/scripts/farm/farm_interaction_controller.gd
+  cb26db6142a0973a 311
+pixel-farm/scenes/shop/shop.gd
+  cb26db6142a0973a 1-11
+pixel-farm/scripts/ui/shop/shop_panel.gd.uid
+  cb26db6142a0973a 1
+pixel-farm/scenes/farm/farm.gd
+  cb26db6142a0973a 11-12,34-36,57,71-72,186-192,359-368
+pixel-farm/scenes/test/test_shop_panel.gd
+  cb26db6142a0973a 1-134,136-230,232-342
+  66f175a65891ae84 135,231
+pixel-farm/scenes/farm/farm.tscn
+  cb26db6142a0973a 1,9,45-46,77-82
+pixel-farm/scenes/test/test_shop_panel.tscn
+  cb26db6142a0973a 1-26
+pixel-farm/scripts/autoload/event_bus.gd
+  cb26db6142a0973a 76-80
+pixel-farm/README.md
+  cb26db6142a0973a 50,119,140-149
+pixel-farm/scripts/ui/shop/shop_item_row.gd.uid
+  cb26db6142a0973a 1
+pixel-farm/scenes/test/test_farm_interaction_controller.gd
+  cb26db6142a0973a 78-79
+openspec/specs/shop-ui/spec.md
+  cb26db6142a0973a 1-202
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8-ntes.9",
+  "base_commit_sha": "78a5bc9ce8da7905d90680002156cce3574bca89",
+  "prompts": {
+    "66f175a65891ae84": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "rollout-2026-06-11T19-40-40-019eb67c-020d-71b0-a1c6-ae56867ffb02",
+        "model": "unknown"
+      },
+      "human_author": "linzizhan",
+      "messages": [],
+      "total_additions": 5,
+      "total_deletions": 2,
+      "accepted_lines": 2,
+      "overriden_lines": 0,
+      "per_file_stats": {
+        "pixel-farm/scenes/farm/farm.gd": {
+          "additions": 3
+        },
+        "pixel-farm/scenes/test/test_shop_panel.gd": {
+          "additions": 2,
+          "deletions": 2,
+          "accepted_lines": 2
+        }
+      }
+    },
+    "cb26db6142a0973a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019eb67c-020d-71b0-a1c6-ae56867ffb02",
+        "model": "gpt-5.5"
+      },
+      "human_author": "linzizhan",
+      "messages": [],
+      "total_additions": 2229,
+      "total_deletions": 59,
+      "accepted_lines": 1735,
+      "overriden_lines": 0,
+      "per_file_stats": {
+        "openspec/specs/shop-ui/spec.md": {
+          "additions": 202,
+          "accepted_lines": 202
+        },
+        "pixel-farm/scenes/test/test_shop_panel.tscn": {
+          "additions": 26,
+          "accepted_lines": 26
+        },
+        "openspec/changes/add-shop-ui-panel/design.md": {
+          "additions": 96
+        },
+        "pixel-farm/README.md": {
+          "additions": 13,
+          "accepted_lines": 13
+        },
+        "openspec/changes/add-shop-ui-panel/specs/shop-ui/spec.md": {
+          "additions": 196
+        },
+        "pixel-farm/scripts/ui/shop/shop_item_row.gd": {
+          "additions": 140,
+          "accepted_lines": 140
+        },
+        "pixel-farm/scenes/farm/farm.tscn": {
+          "additions": 11,
+          "deletions": 1,
+          "accepted_lines": 11
+        },
+        "pixel-farm/scenes/test/test_farm_interaction_controller.gd": {
+          "additions": 2,
+          "accepted_lines": 2
+        },
+        "openspec/changes/add-shop-ui-panel/tasks.md": {
+          "additions": 132,
+          "deletions": 53
+        },
+        "pixel-farm/scripts/autoload/event_bus.gd": {
+          "additions": 5,
+          "accepted_lines": 5
+        },
+        "openspec/changes/add-shop-ui-panel/proposal.md": {
+          "additions": 31
+        },
+        "openspec/specs/event-bus/spec.md": {
+          "additions": 31,
+          "accepted_lines": 31
+        },
+        "openspec/changes/add-shop-ui-panel/.openspec.yaml": {
+          "additions": 2
+        },
+        "openspec/changes/add-shop-ui-panel/specs/event-bus/spec.md": {
+          "additions": 32
+        },
+        "pixel-farm/scripts/ui/shop/shop_item_row.gd.uid": {
+          "additions": 1,
+          "accepted_lines": 1
+        },
+        "pixel-farm/scenes/shop/shop.gd": {
+          "additions": 11,
+          "accepted_lines": 11
+        },
+        "pixel-farm/scripts/ui/shop/shop_panel.gd": {
+          "additions": 590,
+          "deletions": 3,
+          "accepted_lines": 587
+        },
+        "pixel-farm/scenes/ui/shop/shop_panel.tscn": {
+          "additions": 236,
+          "accepted_lines": 236
+        },
+        "pixel-farm/scenes/farm/farm.gd": {
+          "additions": 25,
+          "deletions": 1,
+          "accepted_lines": 25
+        },
+        "pixel-farm/scripts/farm/farm_interaction_controller.gd": {
+          "additions": 1,
+          "deletions": 1,
+          "accepted_lines": 1
+        },
+        "pixel-farm/scenes/test/test_regression_runner.gd": {
+          "additions": 1,
+          "accepted_lines": 1
+        },
+        "pixel-farm/scenes/shop/shop.tscn": {
+          "additions": 39,
+          "accepted_lines": 39
+        },
+        "pixel-farm/scenes/test/test_shop_panel.gd": {
+          "additions": 342,
+          "accepted_lines": 340
+        },
+        "pixel-farm/scripts/ui/shop/shop_panel.gd.uid": {
+          "additions": 1,
+          "accepted_lines": 1
+        },
+        "pixel-farm/scenes/ui/shop/shop_item_row.tscn": {
+          "additions": 63,
+          "accepted_lines": 63
+        }
+      }
+    }
+  }
+}
