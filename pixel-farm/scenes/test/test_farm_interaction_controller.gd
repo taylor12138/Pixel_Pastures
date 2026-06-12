@@ -75,6 +75,8 @@ func test_water_success_and_repeat_failure() -> void:
 	_assert(crop_data["watered"] == true and crop_data["water_count"] == 1, "浇水后 watered=true 且 water_count+1")
 	var repeat: Dictionary = farm_interaction_controller.try_water(tile_pos)
 	_assert(repeat["reason"] == "crop_does_not_need_water", "重复浇水失败返回 crop_does_not_need_water")
+	var resolved_repeat: Dictionary = farm_interaction_controller.resolve_action(tile_pos)
+	_assert(resolved_repeat["reason"] == "crop_does_not_need_water", "自动解析重复浇水返回明确原因")
 
 
 func test_growth_stage_needs_water_again() -> void:

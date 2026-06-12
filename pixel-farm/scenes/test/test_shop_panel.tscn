@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scenes/test/test_shop_panel.gd" id="1_test"]
+[ext_resource type="PackedScene" path="res://scenes/ui/shop/shop_panel.tscn" id="2_panel"]
+[ext_resource type="PackedScene" path="res://scenes/character/player.tscn" id="3_player"]
+[ext_resource type="Script" path="res://scripts/farm/farm_interaction_controller.gd" id="4_interaction"]
+
+[node name="TestShopPanel" type="Node2D"]
+script = ExtResource("1_test")
+
+[node name="Label" type="Label" parent="."]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 472.0
+offset_bottom = 312.0
+text = "ShopPanel tests pending"
+
+[node name="Player" parent="." instance=ExtResource("3_player")]
+visible = false
+
+[node name="FarmInteractionController" type="Node" parent="."]
+script = ExtResource("4_interaction")
+debug_mode = false
+debug_grant_starter_items = false
+
+[node name="ShopPanel" parent="." instance=ExtResource("2_panel")]

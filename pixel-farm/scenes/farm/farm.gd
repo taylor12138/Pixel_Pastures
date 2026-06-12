@@ -8,6 +8,8 @@ extends Node2D
 @onready var interaction_overlay: Node2D = $InteractionOverlay
 @onready var farm_interaction_controller: Node = $Controllers/FarmInteractionController
 @onready var inventory_panel: Control = $UILayer/InventoryPanel
+@onready var shop_panel: Control = $UILayer/ShopPanel
+@onready var shop_button: Button = $DebugLayer/ShopButton
 @onready var coordinate_label: Label = $DebugLayer/CoordinateLabel
 @onready var tile_state_label: Label = $DebugLayer/TileStateLabel
 @onready var player_debug_label: Label = $DebugLayer/PlayerDebugLabel
@@ -29,6 +31,9 @@ var _tile_colors := {
 
 
 func _ready() -> void:
+	# F6 直接运行田园场景时没有主场景负责切换游戏状态。
+	if GameManager.current_state == GameManager.GameState.MAIN_MENU:
+		GameManager.current_state = GameManager.GameState.PLAYING
 	grid_canvas.draw.connect(_on_grid_canvas_draw)
 	interaction_overlay.draw.connect(_on_interaction_overlay_draw)
 	if not EventBus.farm_grid_changed.is_connected(_on_farm_grid_changed):
@@ -49,6 +54,7 @@ func _ready() -> void:
 		farm_grid_manager.initialize_grid()
 	_setup_player()
 	_setup_interaction_controller()
+	_setup_shop_panel()
 	_update_debug_labels(Vector2i(-1, -1))
 	_update_player_debug_label()
 
@@ -62,6 +68,8 @@ func _exit_tree() -> void:
 
 func _input(event: InputEvent) -> void:
 	if _is_open_bag_event(event):
+		if shop_panel != null and shop_panel.has_method("is_panel_open") and bool(shop_panel.call("is_panel_open")):
+			shop_panel.call("close_panel")
 		inventory_panel.call("toggle_panel")
 		get_viewport().set_input_as_handled()
 		return
@@ -173,6 +181,13 @@ func _setup_interaction_controller() -> void:
 		farm_interaction_controller.call("setup", farm_grid_manager, crop_overlay, interaction_debug_label)
 	if farm_interaction_controller.has_method("select_seed"):
 		farm_interaction_controller.call("select_seed", "carrot")
+
+
+func _setup_shop_panel() -> void:
+	if shop_panel != null and shop_panel.has_method("setup"):
+		shop_panel.call("setup", self)
+	if shop_button != null and not shop_button.pressed.is_connected(_on_shop_button_pressed):
+		shop_button.pressed.connect(_on_shop_button_pressed)
 
 
 func _load_manual_save() -> void:
@@ -341,4 +356,13 @@ func _get_player_target_tile() -> Vector2i:
 
 
 func _is_ui_input_blocked() -> bool:
-	return inventory_panel != null and inventory_panel.has_method("is_panel_open") and bool(inventory_panel.call("is_panel_open"))
+	var inventory_open := inventory_panel != null and inventory_panel.has_method("is_panel_open") and bool(inventory_panel.call("is_panel_open"))
+	var shop_open := shop_panel != null and shop_panel.has_method("is_panel_open") and bool(shop_panel.call("is_panel_open"))
+	return inventory_open or shop_open
+
+
+func _on_shop_button_pressed() -> void:
+	if inventory_panel != null and inventory_panel.has_method("is_panel_open") and bool(inventory_panel.call("is_panel_open")):
+		inventory_panel.call("close_panel")
+	if shop_panel != null and shop_panel.has_method("toggle_panel"):
+		shop_panel.call("toggle_panel")

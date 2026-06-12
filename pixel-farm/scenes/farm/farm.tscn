@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://farm_prd8_grid"]
+[gd_scene load_steps=8 format=3 uid="uid://farm_prd8_grid"]
 
 [ext_resource type="Script" path="res://scenes/farm/farm.gd" id="1_farm"]
 [ext_resource type="Script" path="res://scripts/farm/farm_grid_manager.gd" id="2_grid_manager"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/farm/farm_interaction_controller.gd" id="4_interaction"]
 [ext_resource type="Script" path="res://scripts/farm/crop_overlay.gd" id="5_crop_overlay"]
 [ext_resource type="PackedScene" path="res://scenes/ui/inventory/inventory_panel.tscn" id="6_inventory_panel"]
+[ext_resource type="PackedScene" path="res://scenes/ui/shop/shop_panel.tscn" id="7_shop_panel"]
 
 [node name="Farm" type="Node2D"]
 script = ExtResource("1_farm")
@@ -41,6 +42,8 @@ layer = 20
 
 [node name="InventoryPanel" parent="UILayer" instance=ExtResource("6_inventory_panel")]
 
+[node name="ShopPanel" parent="UILayer" instance=ExtResource("7_shop_panel")]
+
 [node name="DebugLayer" type="CanvasLayer" parent="."]
 
 [node name="CoordinateLabel" type="Label" parent="DebugLayer"]
@@ -70,6 +73,13 @@ offset_top = 136.0
 offset_right = 472.0
 offset_bottom = 232.0
 text = "Mode: NONE"
+
+[node name="ShopButton" type="Button" parent="DebugLayer"]
+offset_left = 392.0
+offset_top = 276.0
+offset_right = 472.0
+offset_bottom = 310.0
+text = "商店"
 
 [node name="FarmGridManager" type="Node" parent="."]
 script = ExtResource("2_grid_manager")

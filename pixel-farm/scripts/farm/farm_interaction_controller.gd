@@ -308,7 +308,7 @@ func resolve_action(tile_pos: Vector2i) -> Dictionary:
 			return try_harvest(tile_pos)
 		if stage == CropManager.CropStage.WITHERED:
 			return try_clear(tile_pos)
-		if current_mode == InteractionMode.WATER and CropManager.needs_water(tile_pos):
+		if current_mode == InteractionMode.WATER:
 			return try_water(tile_pos)
 	if current_mode == InteractionMode.PLANT and selected_crop_id != "":
 		return try_plant(tile_pos, selected_crop_id)

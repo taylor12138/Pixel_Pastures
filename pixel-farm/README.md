@@ -47,6 +47,7 @@ open project.godot
 | F5 | 运行游戏 |
 | F6 | 运行当前场景 |
 | Tab | 打开/关闭背包 |
+| 田园右下角“商店” | 打开/关闭商店面板 |
 | Esc | 保存游戏（运行时） |
 | Cmd+Q / Alt+F4 | 退出游戏 |
 
@@ -115,6 +116,7 @@ pixel-farm/
 - `scenes/test/test_crop_manager.tscn`
 - `scenes/test/test_inventory_manager.tscn`
 - `scenes/test/test_inventory_panel.tscn`
+- `scenes/test/test_shop_panel.tscn`
 - `scenes/test/test_level_manager.tscn`
 - `scenes/test/test_economy_manager.tscn`
 - `scenes/test/test_farm_grid_manager.tscn`
@@ -134,6 +136,17 @@ pixel-farm/
 5. 背包打开时角色移动、`E` 交互、农田点击和 PRD10 调试数字键均被阻止，游戏时间不会因此暂停。
 6. 运行 `scenes/test/test_inventory_panel.tscn` 可执行专项测试；`test_inventory_panel_preview.tscn` 用于 480×320 视觉预览。
 7. PRD13 HUD 完成后，由 HUD 统一处理数字键 1-9，并移除 `FarmInteractionController.handle_debug_key_event()` 中 1-5、0 的临时直选逻辑。
+
+## PRD12：商店 UI 验证
+
+1. 在田园场景点击右下角“商店”，或直接运行 `scenes/shop/shop.tscn`，商店默认打开购买 Tab。
+2. 购买列表展示种子、消耗品和装饰；锁定种子灰显并显示所需等级。
+3. 选择商品后可设置 1、5、10 或最大数量，总价与金币/背包容量上限同步。
+4. 切换出售 Tab 后，只显示背包中的可售收获物；出售至库存为 0 后对应行消失。
+5. 商店打开时角色移动、`E` 交互、农田点击和调试数字键均被阻止，游戏时间不会暂停。
+6. `Tab` 打开背包和右下角商店入口会互斥关闭另一个面板。
+7. 运行 `scenes/test/test_shop_panel.tscn` 执行专项测试；该场景也已加入 `test_regression_runner.tscn`。
+8. PRD17 接入正式商店场景和店主交互时，复用 `ShopPanel.setup()` / `open_panel()`，无需修改交易接口。
 
 ## 验证项目运行正常
 

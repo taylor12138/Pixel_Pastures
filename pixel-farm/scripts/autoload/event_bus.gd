@@ -73,6 +73,11 @@ signal inventory_slot_selected(slot_index: int, slot_data: Variant)
 signal inventory_filter_changed(filter_type: String)
 signal inventory_drag_completed(from_index: int, to_index: int, success: bool)
 signal inventory_discard_requested(slot_index: int, item_id: String, quantity: int)
+signal shop_panel_opened()
+signal shop_panel_closed()
+signal shop_tab_changed(tab: String)
+signal shop_item_selected(item_id: String, info: Dictionary)
+signal shop_quantity_changed(item_id: String, quantity: int)
 signal ui_input_block_changed(blocked: bool)
 
 # ─── 背包系统 ───
