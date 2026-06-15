@@ -1,0 +1,136 @@
+pixel-farm/scripts/ui/hud/hotbar.gd.uid
+  b2ca0506255345f7 1
+pixel-farm/scenes/farm/farm.gd
+  b2ca0506255345f7 10,58,218-220
+  7126669cd1377fe5 80-83,155-171
+pixel-farm/scenes/farm/farm.tscn
+  b2ca0506255345f7 1,10,44
+pixel-farm/scripts/farm/farm_interaction_controller.gd
+  b2ca0506255345f7 66-76,157-158,184-185,565-566
+pixel-farm/project.godot
+  b2ca0506255345f7 15,88-132
+pixel-farm/scripts/ui/hud/hotbar_slot.gd.uid
+  b2ca0506255345f7 1
+prd/prd13.md
+  d65a83dfeb08edcb 1-786
+pixel-farm/scripts/ui/hud/hud.gd.uid
+  b2ca0506255345f7 1
+pixel-farm/scenes/test/test_hud.gd
+  7126669cd1377fe5 47-48,51-52
+  b2ca0506255345f7 1-46,49-50,53-266
+pixel-farm/scenes/test/test_hud.tscn
+  b2ca0506255345f7 1-24
+pixel-farm/scenes/test/test_regression_runner.gd
+  b2ca0506255345f7 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8-ntes.9",
+  "base_commit_sha": "521fd9f2975576aa011990105f38bef86f910708",
+  "prompts": {
+    "7126669cd1377fe5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "rollout-2026-06-12T18-17-20-019ebb56-10f5-74b1-9a4f-bc358fa15bc0",
+        "model": "unknown"
+      },
+      "human_author": "linzizhan",
+      "messages": [],
+      "total_additions": 28,
+      "total_deletions": 1,
+      "accepted_lines": 27,
+      "overriden_lines": 0,
+      "per_file_stats": {
+        "pixel-farm/scenes/farm/farm.gd": {
+          "additions": 23,
+          "accepted_lines": 23
+        },
+        "pixel-farm/scenes/test/test_hud.gd": {
+          "additions": 5,
+          "deletions": 1,
+          "accepted_lines": 4
+        }
+      }
+    },
+    "b2ca0506255345f7": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ebb56-10f5-74b1-9a4f-bc358fa15bc0",
+        "model": "gpt-5.5"
+      },
+      "human_author": "linzizhan",
+      "messages": [],
+      "total_additions": 368,
+      "total_deletions": 3,
+      "accepted_lines": 366,
+      "overriden_lines": 0,
+      "per_file_stats": {
+        "pixel-farm/scenes/test/test_hud.tscn": {
+          "additions": 24,
+          "accepted_lines": 24
+        },
+        "pixel-farm/scenes/test/test_hud.gd": {
+          "additions": 262,
+          "accepted_lines": 262
+        },
+        "pixel-farm/scripts/ui/hud/hud.gd.uid": {
+          "additions": 1,
+          "accepted_lines": 1
+        },
+        "pixel-farm/scenes/farm/farm.gd": {
+          "additions": 7,
+          "accepted_lines": 7
+        },
+        "pixel-farm/scripts/farm/farm_interaction_controller.gd": {
+          "additions": 19,
+          "deletions": 1,
+          "accepted_lines": 19
+        },
+        "pixel-farm/scripts/ui/hud/hotbar.gd.uid": {
+          "additions": 1,
+          "accepted_lines": 1
+        },
+        "pixel-farm/project.godot": {
+          "additions": 46,
+          "deletions": 1,
+          "accepted_lines": 46
+        },
+        "pixel-farm/scripts/ui/hud/hotbar_slot.gd.uid": {
+          "additions": 1,
+          "accepted_lines": 1
+        },
+        "pixel-farm/scenes/farm/farm.tscn": {
+          "additions": 4,
+          "deletions": 1,
+          "accepted_lines": 4
+        },
+        "pixel-farm/scenes/test/test_regression_runner.gd": {
+          "additions": 1,
+          "accepted_lines": 1
+        },
+        "openspec/changes/add-farm-hud/.openspec.yaml": {
+          "additions": 2
+        }
+      }
+    },
+    "d65a83dfeb08edcb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "65b42be8-cfee-480d-afc8-3e8d71fa264a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "linzizhan",
+      "messages": [],
+      "total_additions": 786,
+      "total_deletions": 0,
+      "accepted_lines": 786,
+      "overriden_lines": 0,
+      "per_file_stats": {
+        "prd/prd13.md": {
+          "additions": 786,
+          "accepted_lines": 786
+        }
+      }
+    }
+  }
+}
