@@ -7,6 +7,7 @@ extends Node2D
 @onready var player: Node = $EntityLayer/Player
 @onready var interaction_overlay: Node2D = $InteractionOverlay
 @onready var farm_interaction_controller: Node = $Controllers/FarmInteractionController
+@onready var hud: Control = $UILayer/HUD
 @onready var inventory_panel: Control = $UILayer/InventoryPanel
 @onready var shop_panel: Control = $UILayer/ShopPanel
 @onready var shop_button: Button = $DebugLayer/ShopButton
@@ -54,6 +55,7 @@ func _ready() -> void:
 		farm_grid_manager.initialize_grid()
 	_setup_player()
 	_setup_interaction_controller()
+	_setup_hud()
 	_setup_shop_panel()
 	_update_debug_labels(Vector2i(-1, -1))
 	_update_player_debug_label()
@@ -74,6 +76,10 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	if _is_ui_input_blocked():
+		return
+	if event.is_action_pressed("interact"):
+		_request_keyboard_interaction()
+		get_viewport().set_input_as_handled()
 		return
 	if event is InputEventKey and farm_interaction_controller != null and farm_interaction_controller.has_method("handle_debug_key_event"):
 		if bool(farm_interaction_controller.call("handle_debug_key_event", event)):
@@ -146,6 +152,25 @@ func _select_hovered_tile() -> void:
 		crop_overlay.queue_redraw()
 
 
+func _request_keyboard_interaction() -> bool:
+	var hovered_tile: Vector2i = farm_grid_manager.hovered_tile
+	if (
+		farm_grid_manager.is_in_map_bounds(hovered_tile)
+		and farm_interaction_controller != null
+		and farm_interaction_controller.has_method("update_action_preview")
+		and farm_interaction_controller.has_method("request_tile_interaction")
+	):
+		var preview: Dictionary = farm_interaction_controller.call("update_action_preview", hovered_tile)
+		var action := str(preview.get("action", "none"))
+		var reason := str(preview.get("reason", ""))
+		if action != "none" and reason == "":
+			var result: Dictionary = farm_interaction_controller.call("request_tile_interaction", hovered_tile, "keyboard")
+			return bool(result.get("success", false))
+	if player != null and player.has_method("try_interact"):
+		return bool(player.call("try_interact"))
+	return false
+
+
 func _cycle_debug_state(tile_pos: Vector2i) -> void:
 	var current_state: String = farm_grid_manager.get_plot_state(tile_pos)
 	if current_state not in _state_cycle:
@@ -188,6 +213,11 @@ func _setup_shop_panel() -> void:
 		shop_panel.call("setup", self)
 	if shop_button != null and not shop_button.pressed.is_connected(_on_shop_button_pressed):
 		shop_button.pressed.connect(_on_shop_button_pressed)
+
+
+func _setup_hud() -> void:
+	if hud != null and hud.has_method("setup"):
+		hud.call("setup", farm_interaction_controller)
 
 
 func _load_manual_save() -> void:

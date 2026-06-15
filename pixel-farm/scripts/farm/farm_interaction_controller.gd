@@ -63,7 +63,17 @@ func handle_debug_key_event(event: InputEvent) -> bool:
 		return false
 	if (
 		not debug_direct_selection_enabled
-		and event.physical_keycode in [KEY_1, KEY_2, KEY_3, KEY_4]
+		and event.physical_keycode in [
+			KEY_1,
+			KEY_2,
+			KEY_3,
+			KEY_4,
+			KEY_5,
+			KEY_6,
+			KEY_7,
+			KEY_8,
+			KEY_9,
+		]
 	):
 		return false
 	match event.physical_keycode:
@@ -144,6 +154,8 @@ func connect_events() -> void:
 		EventBus.ui_input_block_changed.connect(_on_ui_input_block_changed)
 	if not EventBus.inventory_changed.is_connected(_on_inventory_changed):
 		EventBus.inventory_changed.connect(_on_inventory_changed)
+	if not EventBus.hotbar_selected.is_connected(_on_hotbar_selected):
+		EventBus.hotbar_selected.connect(_on_hotbar_selected)
 
 
 func disconnect_events() -> void:
@@ -169,6 +181,8 @@ func disconnect_events() -> void:
 		EventBus.ui_input_block_changed.disconnect(_on_ui_input_block_changed)
 	if EventBus.inventory_changed.is_connected(_on_inventory_changed):
 		EventBus.inventory_changed.disconnect(_on_inventory_changed)
+	if EventBus.hotbar_selected.is_connected(_on_hotbar_selected):
+		EventBus.hotbar_selected.disconnect(_on_hotbar_selected)
 
 
 func select_seed(crop_id: String) -> bool:
@@ -546,6 +560,10 @@ func _on_inventory_changed(slot_index: int) -> void:
 		and slot_index == InventoryManager.get_selected_hotbar()
 	):
 		sync_selection_from_hotbar()
+
+
+func _on_hotbar_selected(_index: int) -> void:
+	sync_selection_from_hotbar()
 
 
 func _on_crop_state_changed(_tile_pos: Vector2i, _crop_id: String = "") -> void:

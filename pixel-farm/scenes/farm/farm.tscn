@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://farm_prd8_grid"]
+[gd_scene load_steps=9 format=3 uid="uid://farm_prd8_grid"]
 
 [ext_resource type="Script" path="res://scenes/farm/farm.gd" id="1_farm"]
 [ext_resource type="Script" path="res://scripts/farm/farm_grid_manager.gd" id="2_grid_manager"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scripts/farm/crop_overlay.gd" id="5_crop_overlay"]
 [ext_resource type="PackedScene" path="res://scenes/ui/inventory/inventory_panel.tscn" id="6_inventory_panel"]
 [ext_resource type="PackedScene" path="res://scenes/ui/shop/shop_panel.tscn" id="7_shop_panel"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud/hud.tscn" id="8_hud"]
 
 [node name="Farm" type="Node2D"]
 script = ExtResource("1_farm")
@@ -39,6 +40,8 @@ script = ExtResource("4_interaction")
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 layer = 20
+
+[node name="HUD" parent="UILayer" instance=ExtResource("8_hud")]
 
 [node name="InventoryPanel" parent="UILayer" instance=ExtResource("6_inventory_panel")]
 

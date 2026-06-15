@@ -1,0 +1,212 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/hud/hud.gd" id="1_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud/hotbar.tscn" id="2_hotbar"]
+
+[sub_resource type="StyleBoxFlat" id="StyleInfo"]
+bg_color = Color(0.075, 0.1, 0.09, 0.88)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.42, 0.5, 0.44, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StylePrompt"]
+bg_color = Color(0.06, 0.075, 0.07, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.85, 0.78, 0.47, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleXpBackground"]
+bg_color = Color(0.12, 0.15, 0.14, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleXpFill"]
+bg_color = Color(0.38, 0.72, 0.42, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_hud")
+
+[node name="TopBar" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = 58.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="TimePanel" type="PanelContainer" parent="TopBar"]
+layout_mode = 0
+offset_right = 130.0
+offset_bottom = 52.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleInfo")
+
+[node name="TimeMargin" type="MarginContainer" parent="TopBar/TimePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 7
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 7
+theme_override_constants/margin_bottom = 4
+mouse_filter = 2
+
+[node name="TimeVBox" type="VBoxContainer" parent="TopBar/TimePanel/TimeMargin"]
+layout_mode = 2
+theme_override_constants/separation = -2
+mouse_filter = 2
+
+[node name="ClockLabel" type="Label" parent="TopBar/TimePanel/TimeMargin/TimeVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.93, 0.66, 1)
+theme_override_font_sizes/font_size = 14
+text = "06:00"
+mouse_filter = 2
+
+[node name="DateLabel" type="Label" parent="TopBar/TimePanel/TimeMargin/TimeVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "第1年 春季 1日"
+text_overrun_behavior = 3
+mouse_filter = 2
+
+[node name="PhaseLabel" type="Label" parent="TopBar/TimePanel/TimeMargin/TimeVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.84, 0.95, 1)
+theme_override_font_sizes/font_size = 8
+text = "早晨"
+mouse_filter = 2
+
+[node name="StatsPanel" type="PanelContainer" parent="TopBar"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -154.0
+offset_bottom = 52.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleInfo")
+
+[node name="StatsMargin" type="MarginContainer" parent="TopBar/StatsPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 7
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 7
+theme_override_constants/margin_bottom = 4
+mouse_filter = 2
+
+[node name="StatsVBox" type="VBoxContainer" parent="TopBar/StatsPanel/StatsMargin"]
+layout_mode = 2
+theme_override_constants/separation = 1
+mouse_filter = 2
+
+[node name="GoldLabel" type="Label" parent="TopBar/StatsPanel/StatsMargin/StatsVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.82, 0.31, 1)
+theme_override_font_sizes/font_size = 11
+text = "金币 100"
+text_overrun_behavior = 3
+mouse_filter = 2
+
+[node name="LevelRow" type="HBoxContainer" parent="TopBar/StatsPanel/StatsMargin/StatsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+mouse_filter = 2
+
+[node name="LevelLabel" type="Label" parent="TopBar/StatsPanel/StatsMargin/StatsVBox/LevelRow"]
+custom_minimum_size = Vector2(34, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "Lv.1"
+mouse_filter = 2
+
+[node name="XpBar" type="ProgressBar" parent="TopBar/StatsPanel/StatsMargin/StatsVBox/LevelRow"]
+custom_minimum_size = Vector2(96, 7)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_styles/background = SubResource("StyleXpBackground")
+theme_override_styles/fill = SubResource("StyleXpFill")
+show_percentage = false
+
+[node name="XpLabel" type="Label" parent="TopBar/StatsPanel/StatsMargin/StatsVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.8, 0.74, 1)
+theme_override_font_sizes/font_size = 8
+text = "0 / 100"
+horizontal_alignment = 2
+mouse_filter = 2
+
+[node name="InteractionPrompt" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -64.0
+offset_top = -63.0
+offset_right = 64.0
+offset_bottom = -42.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StylePrompt")
+
+[node name="PromptMargin" type="MarginContainer" parent="InteractionPrompt"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 2
+mouse_filter = 2
+
+[node name="PromptLabel" type="Label" parent="InteractionPrompt/PromptMargin"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.94, 0.7, 1)
+theme_override_font_sizes/font_size = 10
+text = "按 E 浇水"
+horizontal_alignment = 1
+mouse_filter = 2
+
+[node name="HotbarRoot" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -36.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="Hotbar" parent="HotbarRoot" instance=ExtResource("2_hotbar")]
+layout_mode = 2

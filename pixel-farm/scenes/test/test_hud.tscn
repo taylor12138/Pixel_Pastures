@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scenes/test/test_hud.gd" id="1_test"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud/hud.tscn" id="2_hud"]
+[ext_resource type="Script" path="res://scripts/farm/farm_interaction_controller.gd" id="3_interaction"]
+
+[node name="TestHUD" type="Node2D"]
+script = ExtResource("1_test")
+
+[node name="Label" type="Label" parent="."]
+visible = false
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 472.0
+offset_bottom = 312.0
+text = "HUD tests pending"
+
+[node name="FarmInteractionController" type="Node" parent="."]
+script = ExtResource("3_interaction")
+debug_mode = true
+debug_direct_selection_enabled = false
+debug_grant_starter_items = false
+
+[node name="HUD" parent="." instance=ExtResource("2_hud")]
